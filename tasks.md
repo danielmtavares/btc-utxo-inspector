@@ -108,30 +108,30 @@ This supports the PRD’s goal of typed API responses, local invalid-address rej
 
 **Goal:** Isolate network calls, retry/timeout behavior, validation, and normalization from CLI commands.
 
-* [ ] Define explorer client interface and provider factory
+* [x] Define explorer client interface and provider factory
   * Create: `src/api/provider.ts`
   * Map `ExplorerSource` to concrete clients; only `blockstream` is implemented for MVP
-* [ ] Implement shared HTTP client with timeout support
+* [x] Implement shared HTTP client with timeout support
   * Create: `src/api/http.ts`
-* [ ] Add exponential backoff retry behavior for retryable provider failures
+* [x] Add exponential backoff retry behavior for retryable provider failures
   * Edit: `src/api/http.ts`
-* [ ] Implement Blockstream Esplora client
+* [x] Implement Blockstream Esplora client
   * Create: `src/api/blockstream.ts`
   * Default base URL: `https://blockstream.info/api`
-* [ ] Support configurable provider base URL
+* [x] Support configurable provider base URL
   * Edit: `src/api/provider.ts`
   * Edit: `src/api/blockstream.ts`
-* [ ] Add functions to fetch address stats and UTXOs
+* [x] Add functions to fetch address stats and UTXOs
   * Edit: `src/api/blockstream.ts`
-* [ ] Add function to fetch transaction details
+* [x] Add function to fetch transaction details
   * Edit: `src/api/blockstream.ts`
-* [ ] Validate all raw API responses with `zod`
+* [x] Validate all raw API responses with `zod`
   * Edit: `src/api/blockstream.ts`
   * Edit: `src/api/schemas.ts`
-* [ ] Normalize raw API responses into shared internal types
+* [x] Normalize raw API responses into shared internal types
   * Edit: `src/api/blockstream.ts`
   * Edit: `src/api/types.ts`
-* [ ] Add fixture-based tests for API normalization
+* [x] Add fixture-based tests for API normalization
   * Create: `test/blockstream.test.ts`
   * Create/edit: `test/fixtures/address.json`
   * Create/edit: `test/fixtures/utxos.json`
