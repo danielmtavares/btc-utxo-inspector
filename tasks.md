@@ -51,9 +51,9 @@ btc-utxo-inspector/
 
 **Goal:** Create the repo foundation, strict TypeScript setup, local CLI binary, and reusable public exports.
 
-* [ ] Initialize npm project
+* [x] Initialize npm project
   * Create/edit: `package.json`
-* [ ] Target Node.js 20+ and ESM (`"type": "module"`, `engines` field)
+* [x] Target Node.js 20+ and ESM (`"type": "module"`, `engines` field)
   * Edit: `package.json`
 * [ ] Configure TypeScript strict mode for ESM (`module` / `moduleResolution` aligned with Node 20)
   * Create/edit: `tsconfig.json`
