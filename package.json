@@ -1,0 +1,33 @@
+{
+  "name": "btc-utxo-inspector",
+  "version": "0.0.1",
+  "description": "A TypeScript CLI for inspecting Bitcoin addresses, summarizing UTXOs and balances, and analyzing transaction details using public blockchain APIs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielmtavares/btc-utxo-inspector.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/danielmtavares/btc-utxo-inspector/issues"
+  },
+  "homepage": "https://github.com/danielmtavares/btc-utxo-inspector#readme",
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "commander": "^14.0.3",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.8.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.22.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
+  }
+}
