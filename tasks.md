@@ -76,27 +76,27 @@ btc-utxo-inspector/
 
 **Goal:** Establish typed domain modeling and local utility logic before network/command logic.
 
-* [ ] Define normalized domain types
+* [x] Define normalized domain types
   * Create: `src/api/types.ts`
   * Include: `AddressSummary`, `Utxo`, `TransactionSummary`, `TransactionInput`, `TransactionOutput`, `ExplorerSource`, pagination metadata, and provider error types
-* [ ] Define Blockstream Esplora response schemas with `zod`
+* [x] Define Blockstream Esplora response schemas with `zod`
   * Create: `src/api/schemas.ts`
-* [ ] Add Bitcoin mainnet address validation
+* [x] Add Bitcoin mainnet address validation
   * Create: `src/utils/address.ts`
   * Support: legacy P2PKH, nested SegWit P2SH, native SegWit, and Taproot
-* [ ] Add sats/BTC conversion helpers
+* [x] Add sats/BTC conversion helpers
   * Create: `src/utils/sats.ts`
-* [ ] Add pagination helpers for UTXOs, inputs, and outputs
+* [x] Add pagination helpers for UTXOs, inputs, and outputs
   * Create: `src/utils/pagination.ts`
-* [ ] Add reusable error helpers and exit-code mapping
+* [x] Add reusable error helpers and exit-code mapping
   * Create: `src/utils/errors.ts`
-* [ ] Add unit tests for sats formatting
+* [x] Add unit tests for sats formatting
   * Create: `test/sats.test.ts`
-* [ ] Add unit tests for address validation
+* [x] Add unit tests for address validation
   * Create: `test/address-validation.test.ts`
-* [ ] Add unit tests for pagination behavior
+* [x] Add unit tests for pagination behavior
   * Create: `test/pagination.test.ts`
-* [ ] Add fixture folder
+* [x] Add fixture folder
   * Create: `test/fixtures/`
 
 This supports the PRD’s goal of typed API responses, local invalid-address rejection, tested utility logic, and no public `any` types.
