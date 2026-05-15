@@ -1,6 +1,6 @@
 # BTC UTXO Inspector - Development Task List
 
-Below is a PR-based MVP task list derived from the PRD and `architecture.md`. The PRD defines the MVP commands, outputs, flags, data source, stack, and success criteria; the architecture doc shows the proposed data flow and build order.
+Below is the MVP task list derived from the PRD and `architecture.md`. It is organized as implementation work items rather than a required PR sequence. The PRD defines the MVP commands, outputs, flags, data source, stack, and success criteria; the architecture doc shows the proposed data flow and build order.
 
 ## Proposed File Structure
 
@@ -47,7 +47,7 @@ btc-utxo-inspector/
   README.md
 ```
 
-## PR 1 - Scaffold TypeScript CLI Project
+## Task 1 - Scaffold TypeScript CLI Project
 
 **Goal:** Create the repo foundation, strict TypeScript setup, local CLI binary, and reusable public exports.
 
@@ -61,6 +61,9 @@ btc-utxo-inspector/
   * Edit: `package.json`
 * [x] Add dev dependencies: `typescript`, `tsx`, `tsup`, `vitest`
   * Edit: `package.json`
+* [x] Add linting with Microsoft-aligned TypeScript naming conventions
+  * Create/edit: `eslint.config.js`
+  * Edit: `package.json`
 * [x] Configure build, typecheck, test, dev, and local CLI scripts
   * Edit: `package.json`
 * [x] Add CLI entry file with shebang
@@ -72,7 +75,7 @@ btc-utxo-inspector/
 * [x] Verify local command runs with `tsx` or npm script execution
   * Edit: `package.json`
 
-## PR 2 - Core Types, Validation, Pagination, and Sats Utilities
+## Task 2 - Core Types, Validation, Pagination, and Sats Utilities
 
 **Goal:** Establish typed domain modeling and local utility logic before network/command logic.
 
@@ -101,34 +104,34 @@ btc-utxo-inspector/
 
 This supports the PRD’s goal of typed API responses, local invalid-address rejection, tested utility logic, and no public `any` types.
 
-## PR 3 - Blockstream Provider and HTTP Layer
+## Task 3 - Blockstream Provider and HTTP Layer
 
 **Goal:** Isolate network calls, retry/timeout behavior, validation, and normalization from CLI commands.
 
-* [ ] Define explorer client interface and provider factory
+* [x] Define explorer client interface and provider factory
   * Create: `src/api/provider.ts`
   * Map `ExplorerSource` to concrete clients; only `blockstream` is implemented for MVP
-* [ ] Implement shared HTTP client with timeout support
+* [x] Implement shared HTTP client with timeout support
   * Create: `src/api/http.ts`
-* [ ] Add exponential backoff retry behavior for retryable provider failures
+* [x] Add exponential backoff retry behavior for retryable provider failures
   * Edit: `src/api/http.ts`
-* [ ] Implement Blockstream Esplora client
+* [x] Implement Blockstream Esplora client
   * Create: `src/api/blockstream.ts`
   * Default base URL: `https://blockstream.info/api`
-* [ ] Support configurable provider base URL
+* [x] Support configurable provider base URL
   * Edit: `src/api/provider.ts`
   * Edit: `src/api/blockstream.ts`
-* [ ] Add functions to fetch address stats and UTXOs
+* [x] Add functions to fetch address stats and UTXOs
   * Edit: `src/api/blockstream.ts`
-* [ ] Add function to fetch transaction details
+* [x] Add function to fetch transaction details
   * Edit: `src/api/blockstream.ts`
-* [ ] Validate all raw API responses with `zod`
+* [x] Validate all raw API responses with `zod`
   * Edit: `src/api/blockstream.ts`
   * Edit: `src/api/schemas.ts`
-* [ ] Normalize raw API responses into shared internal types
+* [x] Normalize raw API responses into shared internal types
   * Edit: `src/api/blockstream.ts`
   * Edit: `src/api/types.ts`
-* [ ] Add fixture-based tests for API normalization
+* [x] Add fixture-based tests for API normalization
   * Create: `test/blockstream.test.ts`
   * Create/edit: `test/fixtures/address.json`
   * Create/edit: `test/fixtures/utxos.json`
@@ -136,7 +139,7 @@ This supports the PRD’s goal of typed API responses, local invalid-address rej
 
 Provider abstraction is required for future mempool.space or testnet support, but mempool.space is not implemented in the MVP.
 
-## PR 4 - Address Command
+## Task 4 - Address Command
 
 **Goal:** Implement `btc-utxo-inspector address <address>`.
 
@@ -162,7 +165,7 @@ Provider abstraction is required for future mempool.space or testnet support, bu
 
 Address command scope: show balance plus UTXOs only. Transaction details remain scoped to `tx <txid>`.
 
-## PR 5 - Transaction Command
+## Task 5 - Transaction Command
 
 **Goal:** Implement `btc-utxo-inspector tx <txid>`.
 
@@ -187,7 +190,7 @@ Address command scope: show balance plus UTXOs only. Transaction details remain 
 * [ ] Add transaction summary tests
   * Create: `test/tx.test.ts`
 
-## PR 6 - Output Formatting, CLI Flags, and Errors
+## Task 6 - Output Formatting, CLI Flags, and Errors
 
 **Goal:** Add clean human-readable and JSON output modes and wire all MVP flags.
 
@@ -221,7 +224,7 @@ Address command scope: show balance plus UTXOs only. Transaction details remain 
   * Edit: `src/utils/errors.ts`
   * Edit: `src/cli.ts`
 
-## PR 7 - Packaging and Local Installability
+## Task 7 - Packaging and Local Installability
 
 **Goal:** Make the CLI package publish-ready and runnable as a local tool.
 
@@ -242,7 +245,7 @@ Address command scope: show balance plus UTXOs only. Transaction details remain 
 
 This maps to the PRD success criteria around local `npm install`, package execution, publish-readiness, CLI binary exposure, and reusable library exports.
 
-## PR 8 - Tests, Snapshots, Mocked Integration, and Quality Gate
+## Task 8 - Tests, Snapshots, Mocked Integration, and Quality Gate
 
 **Goal:** Prove the repo works end-to-end and catches output regressions.
 
@@ -271,16 +274,17 @@ This maps to the PRD success criteria around local `npm install`, package execut
 * [ ] Add mocked provider/API integration tests
   * Create: `test/integration-mock.test.ts`
   * Use deterministic Bitcoin mainnet-shaped address and txid fixtures without calling live public APIs
-* [ ] Add `typecheck`, `test`, and `build` scripts
+* [ ] Add `typecheck`, `test`, `lint`, and `build` scripts
   * Edit: `package.json`
 * [ ] Run full local quality gate:
   * `npm run typecheck`
+  * `npm run lint`
   * `npm test`
   * `npm run build`
 * [ ] Confirm no `any` in public functions and API types
   * Review: `src/api/types.ts`, `src/index.ts`, command modules, formatters
 
-## PR 9 - README and Portfolio Polish
+## Task 9 - README and Portfolio Polish
 
 **Goal:** Make the repo readable and evaluable without reading the source.
 

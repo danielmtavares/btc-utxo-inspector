@@ -3,9 +3,9 @@ import { InvalidAddressError } from "./errors.js";
 import type { BitcoinAddressType, BitcoinNetwork } from "../api/types.js";
 
 const BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-const BASE58_INDEX = new Map([...BASE58_ALPHABET].map((character, index) => [character, index]));
+const BASE58_INDEX = new Map(Array.from(BASE58_ALPHABET, (character, index) => [character, index]));
 const BECH32_CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
-const BECH32_INDEX = new Map([...BECH32_CHARSET].map((character, index) => [character, index]));
+const BECH32_INDEX = new Map(Array.from(BECH32_CHARSET, (character, index) => [character, index]));
 const BECH32M_CONSTANT = 0x2bc830a3;
 
 function hash256(bytes: Uint8Array): Uint8Array {
@@ -88,7 +88,11 @@ function polymod(values: number[]): number {
 
     for (let bit = 0; bit < generators.length; bit += 1) {
       if ((top >>> bit) & 1) {
-        checksum ^= generators[bit]!;
+        const generator = generators[bit];
+
+        if (generator !== undefined) {
+          checksum ^= generator;
+        }
       }
     }
   }
@@ -139,7 +143,8 @@ function convertBits(
     if (bits > 0) {
       output.push((accumulator << (toBits - bits)) & maxValue);
     }
-  } else if (bits >= fromBits || ((accumulator << (toBits - bits)) & maxValue) !== 0) {
+  }
+  else if (bits >= fromBits || ((accumulator << (toBits - bits)) & maxValue) !== 0) {
     return null;
   }
 
@@ -160,7 +165,7 @@ function decodeSegwitAddress(address: string): { type: BitcoinAddressType; netwo
 
   const hrp = normalized.slice(0, separator);
   const dataCharacters = normalized.slice(separator + 1);
-  const data = [...dataCharacters].map((character) => {
+  const data = Array.from(dataCharacters, character => {
     const digit = BECH32_INDEX.get(character);
 
     if (digit === undefined) {
@@ -242,7 +247,8 @@ export function parseBitcoinMainnetAddress(address: string): {
         network: parsed.network,
         type: parsed.type,
       };
-    } catch {
+    }
+    catch {
       throw new InvalidAddressError(trimmed);
     }
   }
@@ -267,7 +273,8 @@ export function parseBitcoinMainnetAddress(address: string): {
           type: "p2sh",
         };
       }
-    } catch {
+    }
+    catch {
       throw new InvalidAddressError(trimmed);
     }
   }
@@ -279,7 +286,8 @@ export function isBitcoinMainnetAddress(address: string): boolean {
   try {
     parseBitcoinMainnetAddress(address);
     return true;
-  } catch {
+  }
+  catch {
     return false;
   }
 }

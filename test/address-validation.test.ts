@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { InvalidAddressError } from "../src/utils/errors.js";
 import { isBitcoinMainnetAddress, parseBitcoinMainnetAddress } from "../src/utils/address.js";
@@ -15,7 +14,11 @@ function polymod(values: number[]): number {
 
     for (let bit = 0; bit < generators.length; bit += 1) {
       if ((top >>> bit) & 1) {
-        checksum ^= generators[bit]!;
+        const generator = generators[bit];
+
+        if (generator !== undefined) {
+          checksum ^= generator;
+        }
       }
     }
   }
@@ -68,10 +71,10 @@ function encodeSegwitAddress(hrp: string, version: number, program: Uint8Array):
   const data = [version, ...converted];
   const values = [...hrpExpand(hrp), ...data, 0, 0, 0, 0, 0, 0];
   const polymodResult = polymod(values) ^ checksumConstant;
-  const checksum = Array.from({ length: 6 }, (_, index) => (polymodResult >> (5 * (5 - index))) & 31);
+  const checksum = Array.from({ length: 6 }, (_unused, index) => (polymodResult >> (5 * (5 - index))) & 31);
   const combined = [...data, ...checksum];
 
-  return `${hrp}1${combined.map((value) => BECH32_CHARSET[value]).join("")}`;
+  return `${hrp}1${combined.map(value => BECH32_CHARSET[value]).join("")}`;
 }
 
 function createTaprootAddress(): string {

@@ -11,6 +11,8 @@
     "dev": "node --import tsx src/cli.ts",
     "start": "node --import tsx src/cli.ts",
     "build": "tsup src/cli.ts src/index.ts --format esm --out-dir dist --clean --sourcemap",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "vitest",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
@@ -31,10 +33,14 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^25.8.0",
+    "eslint": "^10.4.0",
     "tsup": "^8.5.1",
     "tsx": "^4.22.0",
     "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.3",
     "vitest": "^4.1.6"
   }
 }

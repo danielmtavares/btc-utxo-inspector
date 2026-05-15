@@ -91,7 +91,7 @@ export interface TransactionOutput {
   scriptPubKeyAsm: string | null;
   scriptPubKeyType: BitcoinScriptType;
   scriptPubKeyAddress: string | null;
-  spent: boolean;
+  spent: boolean | null;
 }
 
 export interface TransactionInput {
@@ -129,3 +129,19 @@ export type AppErrorCode =
   | "PROVIDER_UNAVAILABLE"
   | "RESPONSE_VALIDATION_FAILURE"
   | "UNEXPECTED_ERROR";
+
+export interface AddressSummaryRequest {
+  address: string;
+  addressType: BitcoinAddressType;
+  pagination: PaginationInput;
+}
+
+export interface TransactionSummaryRequest {
+  txid: string;
+  pagination: PaginationInput;
+}
+
+export interface ExplorerClient {
+  getAddressSummary(request: AddressSummaryRequest): Promise<AddressSummary>;
+  getTransactionSummary(request: TransactionSummaryRequest): Promise<TransactionSummary>;
+}
