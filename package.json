@@ -1,7 +1,7 @@
 {
   "name": "btc-utxo-inspector",
   "version": "0.0.1",
-  "description": "A TypeScript CLI for inspecting Bitcoin addresses, summarizing UTXOs and balances, and analyzing transaction details using public blockchain APIs.",
+  "description": "A CLI for inspecting Bitcoin addresses, summarizing UTXOs and balances, and analyzing transaction details using public blockchain APIs.",
   "main": "index.js",
   "type": "module",
   "engines": {
