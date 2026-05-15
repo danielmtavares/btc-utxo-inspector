@@ -6,14 +6,14 @@ import {
   BlockstreamUtxoSchema,
 } from "../src/api/schemas.js";
 
-function loadFixture<T>(name: string): T {
+function loadFixture(name: string): unknown {
   const fileUrl = new URL(`./fixtures/${name}`, import.meta.url);
-  return JSON.parse(readFileSync(fileUrl, "utf8")) as T;
+  return JSON.parse(readFileSync(fileUrl, "utf8")) as unknown;
 }
 
 describe("blockstream schemas", () => {
   it("parses address stats", () => {
-    const fixture = loadFixture<unknown>("address.json");
+    const fixture = loadFixture("address.json");
     const parsed = BlockstreamAddressSchema.parse(fixture);
 
     expect(parsed.chain_stats.funded_txo_sum).toBe(5250000000);
@@ -21,7 +21,7 @@ describe("blockstream schemas", () => {
   });
 
   it("parses utxos", () => {
-    const fixture = loadFixture<unknown>("utxos.json");
+    const fixture = loadFixture("utxos.json");
     const parsed = BlockstreamUtxoSchema.array().parse(fixture);
 
     expect(parsed).toHaveLength(1);
@@ -31,7 +31,7 @@ describe("blockstream schemas", () => {
   });
 
   it("parses tx details", () => {
-    const fixture = loadFixture<unknown>("tx.json");
+    const fixture = loadFixture("tx.json");
     const parsed = BlockstreamTxSchema.parse(fixture);
 
     expect(parsed.txid).toBe("2222222222222222222222222222222222222222222222222222222222222222");
@@ -39,4 +39,3 @@ describe("blockstream schemas", () => {
     expect(parsed.vout).toHaveLength(1);
   });
 });
-

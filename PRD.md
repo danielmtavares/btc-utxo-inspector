@@ -196,6 +196,7 @@ The package should expose reusable library functions and types for:
 | `tsx` | Run TypeScript directly during development |
 | `tsup` | Bundle and compile for distribution |
 | `vitest` | Unit and integration testing |
+| `eslint` | TypeScript linting and naming/style enforcement |
 
 ### Stack Notes & Pitfalls
 
@@ -223,6 +224,9 @@ Blockstream Esplora is a public, unauthenticated API. It's suitable for a portfo
 **Provider abstraction**
 Only Blockstream Esplora is implemented for MVP, but command handlers should depend on normalized domain models rather than provider-specific response shapes. This keeps future mempool.space or testnet support from leaking into CLI rendering logic.
 
+**Linting and naming conventions**
+Use ESLint with TypeScript-aware rules. Naming conventions should follow the useful parts of the Microsoft TypeScript repo style: PascalCase for type-like names, no `I` prefix for interfaces, camelCase for functions, parameters, properties, and local variables, no leading underscore for private members, and whole-word names where practical. External provider fields may keep their source API casing when represented in response schemas.
+
 ---
 
 ## 5. Success Criteria
@@ -238,6 +242,7 @@ The MVP is complete when:
 - [ ] Invalid Bitcoin mainnet addresses are rejected before provider requests
 - [ ] Unit tests cover sats conversion, address validation, API response normalization, pagination, retry/backoff behavior, and address summary logic
 - [ ] Snapshot tests verify expected human-readable and JSON output
+- [ ] Linting passes with Microsoft-aligned TypeScript naming and style rules
 - [ ] Integration tests use mocked provider/API responses and deterministic fixtures
 - [ ] At least one end-to-end CLI smoke test passes against mocked Bitcoin address and txid fixtures
 - [ ] README includes install steps, example commands, and example output

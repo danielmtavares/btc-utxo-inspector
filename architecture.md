@@ -72,14 +72,17 @@ flowchart TB
 
   subgraph Build["Build / Packaging (ESM)"]
     TS["TypeScript (strict)"]
+    ESLint["ESLint<br/>TypeScript Naming + Style"]
     TSUP["tsup"]
     Package["package.json<br/>type: module<br/>bin: btc-utxo-inspector"]
     Dist["dist/"]
   end
 
+  TS --> ESLint
   TS --> TSUP
   TSUP --> Dist
   Package --> CLI
+  Package --> ESLint
   Package --> TSUP
 ```
 
@@ -94,3 +97,4 @@ flowchart TB
 | `src/api/blockstream.ts` | HTTP + zod validate + map to domain types |
 | `src/format/*` | Human-readable or JSON output to stdout |
 | `src/utils/*` | Address validation, pagination, sats/BTC helpers, stderr errors, exit codes |
+| `eslint.config.js` | TypeScript linting plus Microsoft-aligned naming/style conventions |

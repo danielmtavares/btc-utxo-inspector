@@ -61,6 +61,9 @@ btc-utxo-inspector/
   * Edit: `package.json`
 * [x] Add dev dependencies: `typescript`, `tsx`, `tsup`, `vitest`
   * Edit: `package.json`
+* [x] Add linting with Microsoft-aligned TypeScript naming conventions
+  * Create/edit: `eslint.config.js`
+  * Edit: `package.json`
 * [x] Configure build, typecheck, test, dev, and local CLI scripts
   * Edit: `package.json`
 * [x] Add CLI entry file with shebang
@@ -271,10 +274,11 @@ This maps to the PRD success criteria around local `npm install`, package execut
 * [ ] Add mocked provider/API integration tests
   * Create: `test/integration-mock.test.ts`
   * Use deterministic Bitcoin mainnet-shaped address and txid fixtures without calling live public APIs
-* [ ] Add `typecheck`, `test`, and `build` scripts
+* [ ] Add `typecheck`, `test`, `lint`, and `build` scripts
   * Edit: `package.json`
 * [ ] Run full local quality gate:
   * `npm run typecheck`
+  * `npm run lint`
   * `npm test`
   * `npm run build`
 * [ ] Confirm no `any` in public functions and API types

@@ -1,8 +1,9 @@
 #!/usr/bin/env node
+import { pathToFileURL } from "node:url";
 import { Command } from "commander";
 import { packageVersion } from "./version.js";
 
-export function createCli() {
+export function createCli(): Command {
   const program = new Command();
 
   program.name("btc-utxo-inspector");
@@ -17,6 +18,8 @@ export function createCli() {
   return program;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+const cliPath = process.argv[1];
+
+if (cliPath !== undefined && import.meta.url === pathToFileURL(cliPath).href) {
   await createCli().parseAsync(process.argv);
 }

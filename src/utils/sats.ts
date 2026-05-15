@@ -60,7 +60,7 @@ function normalizeBtcString(value: string): string {
   }
 
   const sats = BigInt(wholePart) * SATS_PER_BTC + BigInt(fraction);
-  return negative ? `-${sats}` : sats.toString();
+  return negative ? `-${sats.toString()}` : sats.toString();
 }
 
 export function satsToBtcString(value: bigint | number | string): string {
@@ -70,7 +70,7 @@ export function satsToBtcString(value: bigint | number | string): string {
   const whole = absValue / SATS_PER_BTC;
   const fraction = absValue % SATS_PER_BTC;
   const fractionString = fraction.toString().padStart(8, "0").replace(/0+$/, "");
-  const formatted = fractionString.length > 0 ? `${whole}.${fractionString}` : whole.toString();
+  const formatted = fractionString.length > 0 ? `${whole.toString()}.${fractionString}` : whole.toString();
 
   return negative ? `-${formatted}` : formatted;
 }
