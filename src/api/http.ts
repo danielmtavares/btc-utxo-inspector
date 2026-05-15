@@ -26,6 +26,19 @@ export interface HttpClient {
   requestJson(options: JsonRequestOptions): Promise<unknown>;
 }
 
+interface ResolvedHttpClientOptions {
+  fetch: FetchLike;
+  sleep: SleepFn;
+  timeoutMs: number;
+  maxAttempts: number;
+  initialBackoffMs: number;
+}
+
+interface RequestContext {
+  source: ExplorerSource;
+  url: string;
+}
+
 function sleepFor(milliseconds: number): Promise<void> {
   return new Promise(resolve => {
     setTimeout(resolve, milliseconds);
@@ -61,87 +74,159 @@ function getProviderDetails(
   };
 }
 
+function resolveHttpClientOptions(options: HttpClientOptions): ResolvedHttpClientOptions {
+  return {
+    fetch: options.fetch ?? fetch,
+    sleep: options.sleep ?? sleepFor,
+    timeoutMs: options.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS,
+    maxAttempts: options.maxAttempts ?? DEFAULT_MAX_ATTEMPTS,
+    initialBackoffMs: options.initialBackoffMs ?? DEFAULT_INITIAL_BACKOFF_MS,
+  };
+}
+
+function createRequestContext(request: JsonRequestOptions): RequestContext {
+  return {
+    source: request.source,
+    url: getRequestUrl(request.baseUrl, request.path),
+  };
+}
+
+function getBackoffDelay(initialBackoffMs: number, attempt: number): number {
+  return initialBackoffMs * 2 ** (attempt - 1);
+}
+
+function shouldRetryAttempt(attempt: number, maxAttempts: number): boolean {
+  return attempt < maxAttempts;
+}
+
+async function waitForRetry(
+  sleep: SleepFn,
+  initialBackoffMs: number,
+  attempt: number,
+): Promise<void> {
+  await sleep(getBackoffDelay(initialBackoffMs, attempt));
+}
+
+function createRequestInit(signal: AbortSignal): RequestInit {
+  return {
+    headers: {
+      accept: "application/json",
+    },
+    method: "GET",
+    signal,
+  };
+}
+
+function handleErrorResponse(
+  response: Response,
+  context: RequestContext,
+): never {
+  if (response.status === 404) {
+    throw new NotFoundError("Requested resource not found", {
+      ...getProviderDetails(context.source, context.url, { statusCode: response.status }),
+    });
+  }
+
+  throw new ProviderUnavailableError(
+    `Provider request failed with status ${String(response.status)}`,
+    {
+      ...getProviderDetails(context.source, context.url, { statusCode: response.status }),
+    },
+  );
+}
+
+async function performRequestAttempt(
+  context: RequestContext,
+  options: ResolvedHttpClientOptions,
+): Promise<Response> {
+  const abortController = new AbortController();
+  const timeoutHandle = setTimeout(() => {
+    abortController.abort();
+  }, options.timeoutMs);
+
+  try {
+    return await options.fetch(context.url, createRequestInit(abortController.signal));
+  }
+  finally {
+    clearTimeout(timeoutHandle);
+  }
+}
+
+function throwTimeoutError(context: RequestContext, timeoutMs: number): never {
+  throw new ProviderUnavailableError("Provider request timed out", {
+    ...getProviderDetails(context.source, context.url, { timeoutMs }),
+  });
+}
+
+function throwNetworkError(context: RequestContext, error: unknown): never {
+  const message = error instanceof Error ? error.message : "Unknown network failure";
+
+  throw new ProviderUnavailableError("Provider request failed", {
+    ...getProviderDetails(context.source, context.url, { message }),
+  });
+}
+
+async function handleAttemptError(
+  context: RequestContext,
+  error: unknown,
+  options: ResolvedHttpClientOptions,
+  attempt: number,
+): Promise<void> {
+  if (error instanceof NotFoundError || error instanceof ProviderUnavailableError) {
+    throw error;
+  }
+
+  if (shouldRetryAttempt(attempt, options.maxAttempts)) {
+    await waitForRetry(options.sleep, options.initialBackoffMs, attempt);
+    return;
+  }
+
+  if (isTimeoutError(error)) {
+    throwTimeoutError(context, options.timeoutMs);
+  }
+
+  throwNetworkError(context, error);
+}
+
+async function executeRequestWithRetries(
+  context: RequestContext,
+  options: ResolvedHttpClientOptions,
+): Promise<unknown> {
+  for (let attempt = 1; attempt <= options.maxAttempts; attempt += 1) {
+    try {
+      const response = await performRequestAttempt(context, options);
+
+      if (response.ok) {
+        return await response.json();
+      }
+
+      if (isRetryableStatus(response.status) && shouldRetryAttempt(attempt, options.maxAttempts)) {
+        await waitForRetry(options.sleep, options.initialBackoffMs, attempt);
+        continue;
+      }
+
+      handleErrorResponse(response, context);
+    }
+    catch (error: unknown) {
+      await handleAttemptError(context, error, options, attempt);
+    }
+  }
+
+  throw new ProviderUnavailableError(
+    "Provider request failed after retries",
+    getProviderDetails(context.source, context.url),
+  );
+}
+
 export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
-  const requestFetch = options.fetch ?? fetch;
-  const requestSleep = options.sleep ?? sleepFor;
-  const timeoutMs = options.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
-  const maxAttempts = options.maxAttempts ?? DEFAULT_MAX_ATTEMPTS;
-  const initialBackoffMs = options.initialBackoffMs ?? DEFAULT_INITIAL_BACKOFF_MS;
+  const resolvedOptions = resolveHttpClientOptions(options);
 
   return {
     async requestJson(request): Promise<unknown> {
-      const url = getRequestUrl(request.baseUrl, request.path);
-
-      for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-        const abortController = new AbortController();
-        const timeoutHandle = setTimeout(() => {
-          abortController.abort();
-        }, timeoutMs);
-
-        try {
-          const response = await requestFetch(url, {
-            headers: {
-              accept: "application/json",
-            },
-            method: "GET",
-            signal: abortController.signal,
-          });
-
-          if (response.ok) {
-            return await response.json();
-          }
-
-          if (response.status === 404) {
-            throw new NotFoundError("Requested resource not found", {
-              ...getProviderDetails(request.source, url, { statusCode: response.status }),
-            });
-          }
-
-          if (isRetryableStatus(response.status) && attempt < maxAttempts) {
-            await requestSleep(initialBackoffMs * 2 ** (attempt - 1));
-            continue;
-          }
-
-          throw new ProviderUnavailableError(
-            `Provider request failed with status ${String(response.status)}`,
-            {
-              ...getProviderDetails(request.source, url, { statusCode: response.status }),
-            },
-          );
-        }
-        catch (error: unknown) {
-          if (error instanceof NotFoundError || error instanceof ProviderUnavailableError) {
-            throw error;
-          }
-
-          if (isTimeoutError(error)) {
-            if (attempt < maxAttempts) {
-              await requestSleep(initialBackoffMs * 2 ** (attempt - 1));
-              continue;
-            }
-
-            throw new ProviderUnavailableError("Provider request timed out", {
-              ...getProviderDetails(request.source, url, { timeoutMs }),
-            });
-          }
-
-          if (attempt < maxAttempts) {
-            await requestSleep(initialBackoffMs * 2 ** (attempt - 1));
-            continue;
-          }
-
-          const message = error instanceof Error ? error.message : "Unknown network failure";
-
-          throw new ProviderUnavailableError("Provider request failed", {
-            ...getProviderDetails(request.source, url, { message }),
-          });
-        }
-        finally {
-          clearTimeout(timeoutHandle);
-        }
-      }
-
-      throw new ProviderUnavailableError("Provider request failed after retries", getProviderDetails(request.source, url));
+      return await executeRequestWithRetries(
+        createRequestContext(request),
+        resolvedOptions,
+      );
     },
   };
 }
