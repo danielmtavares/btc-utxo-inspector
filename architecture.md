@@ -21,7 +21,7 @@ flowchart TB
   Provider --> BlockstreamClient["src/api/blockstream.ts<br/>Blockstream Esplora Client"]
 
   BlockstreamClient --> HttpClient["src/api/http.ts<br/>Timeout + Exponential Backoff"]
-  HttpClient --> Fetch["Node.js 20+ Native fetch"]
+  HttpClient --> Fetch["Node.js 24.15.0+ Native fetch"]
 
   Fetch --> BlockstreamAPI["Blockstream Esplora API<br/>https://blockstream.info/api"]
 

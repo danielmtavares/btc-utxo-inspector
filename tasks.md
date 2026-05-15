@@ -53,9 +53,9 @@ btc-utxo-inspector/
 
 * [x] Initialize npm project
   * Create/edit: `package.json`
-* [x] Target Node.js 20+ and ESM (`"type": "module"`, `engines` field)
+* [x] Target Node.js 24.15.0+ and ESM (`"type": "module"`, `engines` field)
   * Edit: `package.json`
-* [ ] Configure TypeScript strict mode for ESM (`module` / `moduleResolution` aligned with Node 20)
+* [ ] Configure TypeScript strict mode for ESM (`module` / `moduleResolution` aligned with Node 24.15.0)
   * Create/edit: `tsconfig.json`
 * [ ] Add dependencies: `commander`, `zod`, `chalk`
   * Edit: `package.json`

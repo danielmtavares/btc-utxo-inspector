@@ -188,9 +188,9 @@ The package should expose reusable library functions and types for:
 | Tool | Purpose |
 |---|---|
 | TypeScript | Primary language |
-| Node.js 20+ | Runtime |
+| Node.js 24.15.0+ | Runtime |
 | `commander` | CLI argument and flag parsing |
-| Native `fetch` | HTTP requests (built into Node 20+) |
+| Native `fetch` | HTTP requests (built into Node 24.15.0+) |
 | `zod` | Runtime validation of API responses |
 | `chalk` | Terminal color and styling |
 | `tsx` | Run TypeScript directly during development |
@@ -206,7 +206,7 @@ Using `zod` to validate the shape of API responses is a strong signal for a Type
 `commander` is the most straightforward for a small CLI with a few subcommands. `yargs` is more powerful but adds complexity you don't need at MVP. `meow` is minimal but requires more manual subcommand handling. Stick with `commander`.
 
 **Native `fetch` vs `undici`**
-Node 20 ships with `fetch` natively — no additional dependency needed. `undici` gives you more control over HTTP internals but is overkill for simple GET requests to a public API. Use native `fetch` unless you hit limitations.
+Node 24.15.0 ships with `fetch` natively — no additional dependency needed. `undici` gives you more control over HTTP internals but is overkill for simple GET requests to a public API. Use native `fetch` unless you hit limitations.
 
 **`tsx` vs `ts-node`**
 `tsx` is faster, has fewer configuration quirks, and works cleanly with modern ESM setups. Prefer it over `ts-node` for local development.
@@ -215,7 +215,7 @@ Node 20 ships with `fetch` natively — no additional dependency needed. `undici
 `tsup` is minimal, fast, and produces clean CJS/ESM output. It's the right tool for a library or CLI at this scale. If you want dual CJS/ESM output for maximum compatibility, `tsup` handles it out of the box.
 
 **ESM vs CJS**
-This is the most likely source of friction in the project. Node 20, `tsx`, and modern TypeScript all default toward ESM, but several common packages (including older versions of `commander`) have had CJS/ESM compatibility quirks. Recommendation: target ESM output, use `"type": "module"` in `package.json`, and test your `tsup` output before you consider the project done. If you hit import/export issues, this is where to look first.
+This is the most likely source of friction in the project. Node 24.15.0, `tsx`, and modern TypeScript all default toward ESM, but several common packages (including older versions of `commander`) have had CJS/ESM compatibility quirks. Recommendation: target ESM output, use `"type": "module"` in `package.json`, and test your `tsup` output before you consider the project done. If you hit import/export issues, this is where to look first.
 
 **Public API rate limits**
 Blockstream Esplora is a public, unauthenticated API. It's suitable for a portfolio CLI but may impose rate limits. This is worth noting in the README so reviewers understand the scope. Automated tests must use mocks and deterministic fixtures rather than live public API calls.
