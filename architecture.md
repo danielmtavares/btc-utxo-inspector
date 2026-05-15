@@ -1,6 +1,6 @@
 # BTC UTXO Inspector — Architecture
 
-High-level data flow for the MVP CLI (`address`, `tx`), aligned with [PRD.md](./PRD.md) and [tasks.MD](./tasks.MD).
+High-level data flow for the MVP CLI (`address`, `tx`), aligned with [PRD.md](./PRD.md) and [tasks.md](./tasks.md).
 
 ```mermaid
 flowchart TB
