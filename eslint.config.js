@@ -27,6 +27,8 @@ export default tseslint.config(
           prefer: "type-imports",
         },
       ],
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-unused-vars": "error",
       "@typescript-eslint/naming-convention": [
         "error",
         {
@@ -65,6 +67,7 @@ export default tseslint.config(
       "@typescript-eslint/no-confusing-void-expression": "off",
       "@typescript-eslint/no-magic-numbers": "off",
       "@typescript-eslint/no-unnecessary-condition": "off",
+      "@typescript-eslint/switch-exhaustiveness-check": "error",
       "@stylistic/arrow-parens": ["error", "as-needed"],
       "@stylistic/brace-style": ["error", "stroustrup", { allowSingleLine: true }],
       "@stylistic/comma-dangle": ["error", "always-multiline"],
