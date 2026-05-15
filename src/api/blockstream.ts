@@ -148,6 +148,10 @@ function createHttpClientOptions(options: BlockstreamClientOptions) {
   return httpClientOptions;
 }
 
+function getBaseUrl(options: BlockstreamClientOptions): string {
+  return options.baseUrl ?? DEFAULT_BLOCKSTREAM_API_URL;
+}
+
 function normalizeUtxo(utxo: BlockstreamUtxoResponse): Utxo {
   return {
     txid: utxo.txid,
@@ -248,18 +252,34 @@ function createBlockstreamRequestPath(resource: "address" | "utxo" | "tx", value
   }
 }
 
+async function fetchBlockstreamResource<TSchema extends z.ZodType>(
+  httpClient: ReturnType<typeof createHttpClient>,
+  baseUrl: string,
+  path: string,
+  schema: TSchema,
+  resource: string,
+): Promise<z.infer<TSchema>> {
+  const payload = await httpClient.requestJson({
+    source: "blockstream",
+    baseUrl,
+    path,
+  });
+
+  return parseWithSchema(schema, payload, resource);
+}
+
 async function fetchAddressResponse(
   httpClient: ReturnType<typeof createHttpClient>,
   baseUrl: string,
   address: string,
 ): Promise<BlockstreamAddressResponse> {
-  const payload = await httpClient.requestJson({
-    source: "blockstream",
+  return await fetchBlockstreamResource(
+    httpClient,
     baseUrl,
-    path: createBlockstreamRequestPath("address", address),
-  });
-
-  return parseWithSchema(BlockstreamAddressSchema, payload, "address summary");
+    createBlockstreamRequestPath("address", address),
+    BlockstreamAddressSchema,
+    "address summary",
+  );
 }
 
 async function fetchUtxosResponse(
@@ -267,13 +287,13 @@ async function fetchUtxosResponse(
   baseUrl: string,
   address: string,
 ): Promise<BlockstreamUtxoResponse[]> {
-  const payload = await httpClient.requestJson({
-    source: "blockstream",
+  return await fetchBlockstreamResource(
+    httpClient,
     baseUrl,
-    path: createBlockstreamRequestPath("utxo", address),
-  });
-
-  return parseWithSchema(z.array(BlockstreamUtxoSchema), payload, "address utxos");
+    createBlockstreamRequestPath("utxo", address),
+    z.array(BlockstreamUtxoSchema),
+    "address utxos",
+  );
 }
 
 async function fetchTransactionResponse(
@@ -281,13 +301,13 @@ async function fetchTransactionResponse(
   baseUrl: string,
   txid: string,
 ): Promise<BlockstreamTransactionResponse> {
-  const payload = await httpClient.requestJson({
-    source: "blockstream",
+  return await fetchBlockstreamResource(
+    httpClient,
     baseUrl,
-    path: createBlockstreamRequestPath("tx", txid),
-  });
-
-  return parseWithSchema(BlockstreamTxSchema, payload, "transaction details");
+    createBlockstreamRequestPath("tx", txid),
+    BlockstreamTxSchema,
+    "transaction details",
+  );
 }
 
 async function getAddressSummary(
@@ -295,8 +315,10 @@ async function getAddressSummary(
   baseUrl: string,
   request: AddressSummaryRequest,
 ): Promise<AddressSummary> {
-  const addressResponse = await fetchAddressResponse(httpClient, baseUrl, request.address);
-  const utxosResponse = await fetchUtxosResponse(httpClient, baseUrl, request.address);
+  const [addressResponse, utxosResponse] = await Promise.all([
+    fetchAddressResponse(httpClient, baseUrl, request.address),
+    fetchUtxosResponse(httpClient, baseUrl, request.address),
+  ]);
 
   return toAddressSummary(request, addressResponse, utxosResponse);
 }
@@ -312,7 +334,7 @@ async function getTransactionSummary(
 
 export function createBlockstreamClient(options: BlockstreamClientOptions = {}): ExplorerClient {
   const httpClient = createHttpClient(createHttpClientOptions(options));
-  const baseUrl = options.baseUrl ?? DEFAULT_BLOCKSTREAM_API_URL;
+  const baseUrl = getBaseUrl(options);
 
   return {
     async getAddressSummary(request: AddressSummaryRequest): Promise<AddressSummary> {

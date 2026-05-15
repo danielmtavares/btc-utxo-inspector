@@ -95,7 +95,7 @@ function getBackoffDelay(initialBackoffMs: number, attempt: number): number {
   return initialBackoffMs * 2 ** (attempt - 1);
 }
 
-function shouldRetryAttempt(attempt: number, maxAttempts: number): boolean {
+function hasRemainingAttempts(attempt: number, maxAttempts: number): boolean {
   return attempt < maxAttempts;
 }
 
@@ -117,7 +117,7 @@ function createRequestInit(signal: AbortSignal): RequestInit {
   };
 }
 
-function handleErrorResponse(
+function throwHttpErrorResponse(
   response: Response,
   context: RequestContext,
 ): never {
@@ -152,6 +152,30 @@ async function performRequestAttempt(
   }
 }
 
+async function retryAttempt(
+  options: ResolvedHttpClientOptions,
+  attempt: number,
+): Promise<void> {
+  await waitForRetry(options.sleep, options.initialBackoffMs, attempt);
+}
+
+async function retryOnStatusCode(
+  response: Response,
+  options: ResolvedHttpClientOptions,
+  attempt: number,
+): Promise<boolean> {
+  if (!isRetryableStatus(response.status)) {
+    return false;
+  }
+
+  if (!hasRemainingAttempts(attempt, options.maxAttempts)) {
+    return false;
+  }
+
+  await retryAttempt(options, attempt);
+  return true;
+}
+
 function throwTimeoutError(context: RequestContext, timeoutMs: number): never {
   throw new ProviderUnavailableError("Provider request timed out", {
     ...getProviderDetails(context.source, context.url, { timeoutMs }),
@@ -176,8 +200,8 @@ async function handleAttemptError(
     throw error;
   }
 
-  if (shouldRetryAttempt(attempt, options.maxAttempts)) {
-    await waitForRetry(options.sleep, options.initialBackoffMs, attempt);
+  if (hasRemainingAttempts(attempt, options.maxAttempts)) {
+    await retryAttempt(options, attempt);
     return;
   }
 
@@ -200,12 +224,11 @@ async function executeRequestWithRetries(
         return await response.json();
       }
 
-      if (isRetryableStatus(response.status) && shouldRetryAttempt(attempt, options.maxAttempts)) {
-        await waitForRetry(options.sleep, options.initialBackoffMs, attempt);
+      if (await retryOnStatusCode(response, options, attempt)) {
         continue;
       }
 
-      handleErrorResponse(response, context);
+      throwHttpErrorResponse(response, context);
     }
     catch (error: unknown) {
       await handleAttemptError(context, error, options, attempt);

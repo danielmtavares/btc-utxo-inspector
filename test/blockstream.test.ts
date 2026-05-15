@@ -32,23 +32,37 @@ function getRequestUrl(input: string | URL | Request): string {
   return input.url;
 }
 
+function createResolvedSleepMock() {
+  return vi.fn<(milliseconds: number) => Promise<void>>(async () => {
+    await Promise.resolve();
+  });
+}
+
+function createStaticFetch(body: unknown, status = 200) {
+  return vi.fn<typeof fetch>(() => Promise.resolve(createJsonResponse(body, status)));
+}
+
+function createAddressFetch(addressFixture: unknown, utxosFixture: unknown) {
+  return vi.fn<typeof fetch>(input => {
+    const url = getRequestUrl(input);
+
+    if (url.endsWith("/address/1BoatSLRHtKNngkdXEeobR76b53LETtpyT")) {
+      return Promise.resolve(createJsonResponse(addressFixture));
+    }
+
+    if (url.endsWith("/address/1BoatSLRHtKNngkdXEeobR76b53LETtpyT/utxo")) {
+      return Promise.resolve(createJsonResponse(utxosFixture));
+    }
+
+    throw new Error(`Unexpected URL: ${url}`);
+  });
+}
+
 describe("blockstream client", () => {
   it("normalizes address summaries and paginates utxos", async () => {
     const addressFixture = loadFixture("address.json");
     const utxosFixture = loadFixture("utxos.json");
-    const fetchMock = vi.fn<typeof fetch>(input => {
-      const url = getRequestUrl(input);
-
-      if (url.endsWith("/address/1BoatSLRHtKNngkdXEeobR76b53LETtpyT")) {
-        return Promise.resolve(createJsonResponse(addressFixture));
-      }
-
-      if (url.endsWith("/address/1BoatSLRHtKNngkdXEeobR76b53LETtpyT/utxo")) {
-        return Promise.resolve(createJsonResponse(utxosFixture));
-      }
-
-      throw new Error(`Unexpected URL: ${url}`);
-    });
+    const fetchMock = createAddressFetch(addressFixture, utxosFixture);
     const client = createBlockstreamClient({
       fetch: fetchMock,
     });
@@ -81,7 +95,7 @@ describe("blockstream client", () => {
 
   it("normalizes transaction summaries", async () => {
     const txFixture = loadFixture("tx.json");
-    const fetchMock = vi.fn<typeof fetch>(() => Promise.resolve(createJsonResponse(txFixture)));
+    const fetchMock = createStaticFetch(txFixture);
     const client = createBlockstreamClient({
       fetch: fetchMock,
     });
@@ -109,7 +123,7 @@ describe("blockstream client", () => {
   });
 
   it("uses the configured base URL through the provider factory", async () => {
-    const fetchMock = vi.fn<typeof fetch>(() => Promise.resolve(createJsonResponse(loadFixture("tx.json"))));
+    const fetchMock = createStaticFetch(loadFixture("tx.json"));
     const client = createExplorerClient({
       baseUrl: "https://example.test/esplora",
       fetch: fetchMock,
@@ -132,7 +146,7 @@ describe("blockstream client", () => {
   });
 
   it("surfaces validation failures from malformed provider responses", async () => {
-    const fetchMock = vi.fn<typeof fetch>(() => Promise.resolve(createJsonResponse({ nope: true })));
+    const fetchMock = createStaticFetch({ nope: true });
     const client = createBlockstreamClient({
       fetch: fetchMock,
     });
@@ -155,7 +169,7 @@ describe("http client", () => {
       .fn<typeof fetch>()
       .mockResolvedValueOnce(createJsonResponse({ error: "temporary" }, 503))
       .mockResolvedValueOnce(createJsonResponse({ ok: true }));
-    const sleepMock = vi.fn<(milliseconds: number) => Promise<void>>(() => Promise.resolve());
+    const sleepMock = createResolvedSleepMock();
     const client = createHttpClient({
       fetch: fetchMock,
       sleep: sleepMock,
@@ -175,8 +189,8 @@ describe("http client", () => {
   });
 
   it("does not retry not found responses", async () => {
-    const fetchMock = vi.fn<typeof fetch>(() => Promise.resolve(createJsonResponse({ error: "missing" }, 404)));
-    const sleepMock = vi.fn<(milliseconds: number) => Promise<void>>(() => Promise.resolve());
+    const fetchMock = createStaticFetch({ error: "missing" }, 404);
+    const sleepMock = createResolvedSleepMock();
     const client = createHttpClient({
       fetch: fetchMock,
       sleep: sleepMock,
@@ -199,7 +213,7 @@ describe("http client", () => {
       .mockRejectedValueOnce(new TypeError("socket hang up"))
       .mockRejectedValueOnce(new TypeError("socket hang up"))
       .mockRejectedValueOnce(new TypeError("socket hang up"));
-    const sleepMock = vi.fn<(milliseconds: number) => Promise<void>>(() => Promise.resolve());
+    const sleepMock = createResolvedSleepMock();
     const client = createHttpClient({
       fetch: fetchMock,
       sleep: sleepMock,
