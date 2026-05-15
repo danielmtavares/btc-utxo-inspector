@@ -57,19 +57,19 @@ btc-utxo-inspector/
   * Edit: `package.json`
 * [x] Configure TypeScript strict mode for ESM (`module` / `moduleResolution` aligned with Node 24.15.0)
   * Create/edit: `tsconfig.json`
-* [ ] Add dependencies: `commander`, `zod`, `chalk`
+* [x] Add dependencies: `commander`, `zod`, `chalk`
   * Edit: `package.json`
-* [ ] Add dev dependencies: `typescript`, `tsx`, `tsup`, `vitest`
+* [x] Add dev dependencies: `typescript`, `tsx`, `tsup`, `vitest`
   * Edit: `package.json`
-* [ ] Configure build, typecheck, test, dev, and local CLI scripts
+* [x] Configure build, typecheck, test, dev, and local CLI scripts
   * Edit: `package.json`
-* [ ] Add CLI entry file with shebang
+* [x] Add CLI entry file with shebang
   * Create: `src/cli.ts`
-* [ ] Add public export entry for reusable library functions
+* [x] Add public export entry for reusable library functions
   * Create: `src/index.ts`
-* [ ] Add basic help/version output
+* [x] Add basic help/version output
   * Edit: `src/cli.ts`
-* [ ] Verify local command runs with `tsx` or npm script execution
+* [x] Verify local command runs with `tsx` or npm script execution
   * Edit: `package.json`
 
 ## PR 2 - Core Types, Validation, Pagination, and Sats Utilities
