@@ -1,0 +1,310 @@
+# BTC UTXO Inspector - Development Task List
+
+Below is a PR-based MVP task list derived from the PRD and `architecture.md`. The PRD defines the MVP commands, outputs, flags, data source, stack, and success criteria; the architecture doc shows the proposed data flow and build order.
+
+## Proposed File Structure
+
+```text
+btc-utxo-inspector/
+  src/
+    cli.ts
+    index.ts
+    api/
+      http.ts
+      blockstream.ts
+      provider.ts
+      schemas.ts
+      types.ts
+    commands/
+      address.ts
+      tx.ts
+    format/
+      human.ts
+      json.ts
+    utils/
+      address.ts
+      errors.ts
+      pagination.ts
+      sats.ts
+  test/
+    fixtures/
+      address.json
+      tx.json
+      utxos.json
+    snapshots/
+    address-validation.test.ts
+    sats.test.ts
+    pagination.test.ts
+    address.test.ts
+    tx.test.ts
+    blockstream.test.ts
+    cli-smoke.test.ts
+    integration-mock.test.ts
+  package.json
+  tsconfig.json
+  tsup.config.ts
+  vitest.config.ts
+  README.md
+```
+
+## PR 1 - Scaffold TypeScript CLI Project
+
+**Goal:** Create the repo foundation, strict TypeScript setup, local CLI binary, and reusable public exports.
+
+* [ ] Initialize npm project
+  * Create/edit: `package.json`
+* [ ] Target Node.js 20+ and ESM (`"type": "module"`, `engines` field)
+  * Edit: `package.json`
+* [ ] Configure TypeScript strict mode for ESM (`module` / `moduleResolution` aligned with Node 20)
+  * Create/edit: `tsconfig.json`
+* [ ] Add dependencies: `commander`, `zod`, `chalk`
+  * Edit: `package.json`
+* [ ] Add dev dependencies: `typescript`, `tsx`, `tsup`, `vitest`
+  * Edit: `package.json`
+* [ ] Configure build, typecheck, test, dev, and local CLI scripts
+  * Edit: `package.json`
+* [ ] Add CLI entry file with shebang
+  * Create: `src/cli.ts`
+* [ ] Add public export entry for reusable library functions
+  * Create: `src/index.ts`
+* [ ] Add basic help/version output
+  * Edit: `src/cli.ts`
+* [ ] Verify local command runs with `tsx` or npm script execution
+  * Edit: `package.json`
+
+## PR 2 - Core Types, Validation, Pagination, and Sats Utilities
+
+**Goal:** Establish typed domain modeling and local utility logic before network/command logic.
+
+* [ ] Define normalized domain types
+  * Create: `src/api/types.ts`
+  * Include: `AddressSummary`, `Utxo`, `TransactionSummary`, `TransactionInput`, `TransactionOutput`, `ExplorerSource`, pagination metadata, and provider error types
+* [ ] Define Blockstream Esplora response schemas with `zod`
+  * Create: `src/api/schemas.ts`
+* [ ] Add Bitcoin mainnet address validation
+  * Create: `src/utils/address.ts`
+  * Support: legacy P2PKH, nested SegWit P2SH, native SegWit, and Taproot
+* [ ] Add sats/BTC conversion helpers
+  * Create: `src/utils/sats.ts`
+* [ ] Add pagination helpers for UTXOs, inputs, and outputs
+  * Create: `src/utils/pagination.ts`
+* [ ] Add reusable error helpers and exit-code mapping
+  * Create: `src/utils/errors.ts`
+* [ ] Add unit tests for sats formatting
+  * Create: `test/sats.test.ts`
+* [ ] Add unit tests for address validation
+  * Create: `test/address-validation.test.ts`
+* [ ] Add unit tests for pagination behavior
+  * Create: `test/pagination.test.ts`
+* [ ] Add fixture folder
+  * Create: `test/fixtures/`
+
+This supports the PRD’s goal of typed API responses, local invalid-address rejection, tested utility logic, and no public `any` types.
+
+## PR 3 - Blockstream Provider and HTTP Layer
+
+**Goal:** Isolate network calls, retry/timeout behavior, validation, and normalization from CLI commands.
+
+* [ ] Define explorer client interface and provider factory
+  * Create: `src/api/provider.ts`
+  * Map `ExplorerSource` to concrete clients; only `blockstream` is implemented for MVP
+* [ ] Implement shared HTTP client with timeout support
+  * Create: `src/api/http.ts`
+* [ ] Add exponential backoff retry behavior for retryable provider failures
+  * Edit: `src/api/http.ts`
+* [ ] Implement Blockstream Esplora client
+  * Create: `src/api/blockstream.ts`
+  * Default base URL: `https://blockstream.info/api`
+* [ ] Support configurable provider base URL
+  * Edit: `src/api/provider.ts`
+  * Edit: `src/api/blockstream.ts`
+* [ ] Add functions to fetch address stats and UTXOs
+  * Edit: `src/api/blockstream.ts`
+* [ ] Add function to fetch transaction details
+  * Edit: `src/api/blockstream.ts`
+* [ ] Validate all raw API responses with `zod`
+  * Edit: `src/api/blockstream.ts`
+  * Edit: `src/api/schemas.ts`
+* [ ] Normalize raw API responses into shared internal types
+  * Edit: `src/api/blockstream.ts`
+  * Edit: `src/api/types.ts`
+* [ ] Add fixture-based tests for API normalization
+  * Create: `test/blockstream.test.ts`
+  * Create/edit: `test/fixtures/address.json`
+  * Create/edit: `test/fixtures/utxos.json`
+  * Create/edit: `test/fixtures/tx.json`
+
+Provider abstraction is required for future mempool.space or testnet support, but mempool.space is not implemented in the MVP.
+
+## PR 4 - Address Command
+
+**Goal:** Implement `btc-utxo-inspector address <address>`.
+
+* [ ] Add address command module
+  * Create: `src/commands/address.ts`
+* [ ] Wire address command into CLI
+  * Edit: `src/cli.ts`
+* [ ] Reject invalid Bitcoin mainnet addresses before provider calls
+  * Edit: `src/commands/address.ts`
+  * Edit: `src/utils/address.ts`
+* [ ] Fetch address stats and UTXOs via the Blockstream provider abstraction
+  * Edit: `src/commands/address.ts`
+  * Edit: `src/api/provider.ts`
+* [ ] Compute total received, total spent, and current balance in BTC and sats
+  * Edit: `src/commands/address.ts`
+* [ ] Include paginated UTXO details: amount, `txid:vout`, confirmation status, block height, and script type when available
+  * Edit: `src/commands/address.ts`
+  * Edit: `src/utils/pagination.ts`
+* [ ] Return normalized command result instead of printing directly
+  * Edit: `src/commands/address.ts`
+* [ ] Add address summary unit tests
+  * Create: `test/address.test.ts`
+
+Address command scope: show balance plus UTXOs only. Transaction details remain scoped to `tx <txid>`.
+
+## PR 5 - Transaction Command
+
+**Goal:** Implement `btc-utxo-inspector tx <txid>`.
+
+* [ ] Add transaction command module
+  * Create: `src/commands/tx.ts`
+* [ ] Wire tx command into CLI
+  * Edit: `src/cli.ts`
+* [ ] Fetch transaction by txid via the Blockstream provider abstraction
+  * Edit: `src/commands/tx.ts`
+  * Edit: `src/api/provider.ts`
+* [ ] Include confirmation status, block height, and timestamp when available
+  * Edit: `src/commands/tx.ts`
+* [ ] Include full input and output details with pagination for large transactions
+  * Edit: `src/commands/tx.ts`
+  * Edit: `src/utils/pagination.ts`
+* [ ] Include total input value only when available directly from the provider
+  * Edit: `src/commands/tx.ts`
+* [ ] Include total output value
+  * Edit: `src/commands/tx.ts`
+* [ ] Include fee in sats and BTC only when provided directly by the API
+  * Edit: `src/commands/tx.ts`
+* [ ] Add transaction summary tests
+  * Create: `test/tx.test.ts`
+
+## PR 6 - Output Formatting, CLI Flags, and Errors
+
+**Goal:** Add clean human-readable and JSON output modes and wire all MVP flags.
+
+* [ ] Add human-readable formatter using `chalk`
+  * Create: `src/format/human.ts`
+* [ ] Add JSON formatter
+  * Create: `src/format/json.ts`
+* [ ] Support `--json`
+  * Edit: `src/cli.ts`
+* [ ] Support `--source blockstream`
+  * Edit: `src/cli.ts`
+  * Edit: `src/commands/address.ts`
+  * Edit: `src/commands/tx.ts`
+* [ ] Support `--api-url <url>`
+  * Edit: `src/cli.ts`
+  * Edit: `src/api/provider.ts`
+* [ ] Support `--limit <number>` and `--page <number>` with PRD defaults of `25` and `1`
+  * Edit: `src/cli.ts`
+  * Edit: `src/commands/address.ts`
+  * Edit: `src/commands/tx.ts`
+* [ ] Ensure JSON output is valid parseable stdout
+  * Edit: `src/format/json.ts`
+  * Create/update: `test/cli-smoke.test.ts`
+* [ ] Emit JSON errors to stderr when `--json` is set
+  * Edit: `src/cli.ts`
+  * Edit: `src/utils/errors.ts`
+* [ ] Keep all errors on stderr
+  * Edit: `src/cli.ts`
+  * Edit: `src/utils/errors.ts`
+* [ ] Map invalid address, not found, provider failure, validation failure, and unexpected errors to non-zero exit codes
+  * Edit: `src/utils/errors.ts`
+  * Edit: `src/cli.ts`
+
+## PR 7 - Packaging and Local Installability
+
+**Goal:** Make the CLI package publish-ready and runnable as a local tool.
+
+* [ ] Configure `tsup` for ESM output and public library exports
+  * Create: `tsup.config.ts`
+* [ ] Add `bin` entry for `btc-utxo-inspector`
+  * Edit: `package.json`
+* [ ] Add package `exports` for reusable library functions
+  * Edit: `package.json`
+  * Edit: `src/index.ts`
+* [ ] Ensure built CLI keeps executable shebang
+  * Edit: `src/cli.ts`
+  * Edit: `tsup.config.ts`
+* [ ] Verify local install/execution flow
+  * Edit if needed: `package.json`
+* [ ] Add package metadata required for publish-readiness
+  * Edit: `package.json`
+
+This maps to the PRD success criteria around local `npm install`, package execution, publish-readiness, CLI binary exposure, and reusable library exports.
+
+## PR 8 - Tests, Snapshots, Mocked Integration, and Quality Gate
+
+**Goal:** Prove the repo works end-to-end and catches output regressions.
+
+* [ ] Add Vitest config
+  * Create: `vitest.config.ts`
+* [ ] Add snapshot tests for human-readable output
+  * Create/edit: `test/address.test.ts`
+  * Create/edit: `test/tx.test.ts`
+  * Create: `test/snapshots/`
+* [ ] Add snapshot tests for JSON output
+  * Create/edit: `test/address.test.ts`
+  * Create/edit: `test/tx.test.ts`
+* [ ] Add CLI smoke test
+  * Create: `test/cli-smoke.test.ts`
+* [ ] Verify address command contains expected fields
+  * Edit: `test/cli-smoke.test.ts`
+* [ ] Verify tx command contains expected fields
+  * Edit: `test/cli-smoke.test.ts`
+* [ ] Verify `--json` emits parseable JSON
+  * Edit: `test/cli-smoke.test.ts`
+* [ ] Verify `--json` errors emit parseable JSON to stderr
+  * Edit: `test/cli-smoke.test.ts`
+* [ ] Verify JSON error output matches the PRD error envelope shape
+  * Edit: `test/cli-smoke.test.ts`
+  * Edit: `src/utils/errors.ts`
+* [ ] Add mocked provider/API integration tests
+  * Create: `test/integration-mock.test.ts`
+  * Use deterministic Bitcoin mainnet-shaped address and txid fixtures without calling live public APIs
+* [ ] Add `typecheck`, `test`, and `build` scripts
+  * Edit: `package.json`
+* [ ] Run full local quality gate:
+  * `npm run typecheck`
+  * `npm test`
+  * `npm run build`
+* [ ] Confirm no `any` in public functions and API types
+  * Review: `src/api/types.ts`, `src/index.ts`, command modules, formatters
+
+## PR 9 - README and Portfolio Polish
+
+**Goal:** Make the repo readable and evaluable without reading the source.
+
+* [ ] Write project overview
+  * Edit: `README.md`
+* [ ] Explain why the project exists
+  * Edit: `README.md`
+* [ ] Add local install and execution instructions
+  * Edit: `README.md`
+* [ ] Add address command examples
+  * Edit: `README.md`
+* [ ] Add tx command examples
+  * Edit: `README.md`
+* [ ] Add JSON output examples (`--json`)
+  * Edit: `README.md`
+* [ ] Document `--source blockstream`, `--api-url`, `--limit`, and `--page`
+  * Edit: `README.md`
+* [ ] Document exit codes
+  * Edit: `README.md`
+* [ ] Add note about public API usage, rate limits, timeout, and retry behavior
+  * Edit: `README.md`
+* [ ] Add example terminal output for default human-readable mode
+  * Edit: `README.md`
+* [ ] Add “Not included in MVP” section
+  * Edit: `README.md`
+* [ ] Add future improvements section
+  * Edit: `README.md`
