@@ -182,8 +182,8 @@ Received 55 BTC (5,500,000,000 sats)
 Spent 12.5 BTC (1,250,000,000 sats)
 Balance 42.5 BTC (4,250,000,000 sats)
 Page 1/1 Items 1
-UTXOs
-1. 1111111111111111111111111111111111111111111111111111111111111111:0 50 BTC (5,000,000,000 sats) confirmed block 100000 unknown
+UTXOs Page 1/1 Items 1
+1. 1111111111111111111111111111111111111111111111111111111111111111:0 50 BTC (5,000,000,000 sats) confirmed block 100000 p2pkh
 ```
 
 Example default output for a transaction:
@@ -197,10 +197,11 @@ Input Total 50 BTC (5,000,000,000 sats)
 Output Total 49.999 BTC (4,999,900,000 sats)
 Fee 0.001 BTC (100,000 sats)
 Inputs 1
+Inputs Page 1/1 Items 1
 1. 1111111111111111111111111111111111111111111111111111111111111111:0 50 BTC (5,000,000,000 sats)
 Outputs 1
 1. 49.999 BTC (4,999,900,000 sats) p2wpkh bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kygt080
-Page 1/1 Items 1
+Outputs Page 1/1 Items 1
 ```
 
 ## JSON Output Example

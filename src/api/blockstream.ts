@@ -152,14 +152,18 @@ function getBaseUrl(options: BlockstreamClientOptions): string {
   return options.baseUrl ?? DEFAULT_BLOCKSTREAM_API_URL;
 }
 
-function normalizeUtxo(utxo: BlockstreamUtxoResponse): Utxo {
+function normalizeUtxo(
+  utxo: BlockstreamUtxoResponse,
+  addressType: AddressSummaryRequest["addressType"],
+  address: string,
+): Utxo {
   return {
     txid: utxo.txid,
     vout: utxo.vout,
     valueSats: BigInt(utxo.value),
     status: toUtxoStatus(utxo.status),
-    scriptPubKeyType: "unknown",
-    scriptPubKeyAddress: null,
+    scriptPubKeyType: addressType,
+    scriptPubKeyAddress: address,
   };
 }
 
@@ -184,7 +188,7 @@ function toAddressSummary(
 ): AddressSummary {
   const chainStats = toAddressStatistics(addressResponse.chain_stats);
   const mempoolStats = toAddressStatistics(addressResponse.mempool_stats);
-  const normalizedUtxos = utxos.map(normalizeUtxo);
+  const normalizedUtxos = utxos.map(utxo => normalizeUtxo(utxo, request.addressType, request.address));
 
   return {
     address: request.address,

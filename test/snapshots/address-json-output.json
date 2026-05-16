@@ -31,7 +31,7 @@
         "confirmationStatus": "confirmed",
         "confirmed": true,
         "blockHeight": 100000,
-        "scriptType": "unknown"
+        "scriptType": "p2pkh"
       }
     ],
     "pagination": {

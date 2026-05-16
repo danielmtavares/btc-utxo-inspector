@@ -88,8 +88,8 @@ describe("blockstream client", () => {
     expect(summary.utxos.items[0]).toMatchObject({
       txid: "1111111111111111111111111111111111111111111111111111111111111111",
       vout: 0,
-      scriptPubKeyType: "unknown",
-      scriptPubKeyAddress: null,
+      scriptPubKeyType: "p2pkh",
+      scriptPubKeyAddress: "1BoatSLRHtKNngkdXEeobR76b53LETtpyT",
     });
   });
 
@@ -143,6 +143,14 @@ describe("blockstream client", () => {
         method: "GET",
       }),
     );
+  });
+
+  it("rejects unsupported explorer sources", () => {
+    expect(() =>
+      createExplorerClient({
+        source: "mempool" as never,
+      }),
+    ).toThrow("Unsupported explorer source: mempool");
   });
 
   it("surfaces validation failures from malformed provider responses", async () => {
