@@ -1,6 +1,6 @@
 # btc-utxo-inspector
 
-A TypeScript CLI for inspecting Bitcoin mainnet addresses and transactions from the terminal.
+A CLI for inspecting Bitcoin mainnet addresses and transactions from the terminal.
 
 It summarizes:
 
