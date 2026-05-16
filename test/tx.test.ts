@@ -1,6 +1,9 @@
+import { fileURLToPath } from "node:url";
 import { describe, expect, it, vi } from "vitest";
 import { InvalidPaginationError } from "../src/utils/errors.js";
 import { inspectTransactionCommand } from "../src/commands/tx.js";
+import { formatHumanTransaction } from "../src/format/human.js";
+import { formatJson } from "../src/format/json.js";
 import type { ExplorerClient, TransactionSummary } from "../src/api/types.js";
 
 function createExplorerClient(summary: TransactionSummary): {
@@ -154,6 +157,40 @@ describe("inspectTransactionCommand", () => {
         sats: "4,999,900,000 sats",
       },
     });
+  });
+
+  it("matches the human-readable output snapshot", async () => {
+    const summary = createTransactionSummary();
+    const { client } = createExplorerClient(summary);
+    const result = await inspectTransactionCommand(
+      {
+        txid: summary.txid,
+      },
+      {
+        createClient: () => client,
+      },
+    );
+
+    await expect(formatHumanTransaction(result)).toMatchFileSnapshot(
+      fileURLToPath(new URL("./snapshots/tx-human-output.txt", import.meta.url)),
+    );
+  });
+
+  it("matches the json output snapshot", async () => {
+    const summary = createTransactionSummary();
+    const { client } = createExplorerClient(summary);
+    const result = await inspectTransactionCommand(
+      {
+        txid: summary.txid,
+      },
+      {
+        createClient: () => client,
+      },
+    );
+
+    await expect(formatJson(result)).toMatchFileSnapshot(
+      fileURLToPath(new URL("./snapshots/tx-json-output.json", import.meta.url)),
+    );
   });
 
   it("uses pagination defaults", async () => {

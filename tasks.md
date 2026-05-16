@@ -249,39 +249,39 @@ This maps to the PRD success criteria around local `npm install`, package execut
 
 **Goal:** Prove the repo works end-to-end and catches output regressions.
 
-* [ ] Add Vitest config
+* [x] Add Vitest config
   * Create: `vitest.config.ts`
-* [ ] Add snapshot tests for human-readable output
+* [x] Add snapshot tests for human-readable output
   * Create/edit: `test/address.test.ts`
   * Create/edit: `test/tx.test.ts`
   * Create: `test/snapshots/`
-* [ ] Add snapshot tests for JSON output
+* [x] Add snapshot tests for JSON output
   * Create/edit: `test/address.test.ts`
   * Create/edit: `test/tx.test.ts`
-* [ ] Add CLI smoke test
+* [x] Add CLI smoke test
   * Create: `test/cli-smoke.test.ts`
-* [ ] Verify address command contains expected fields
+* [x] Verify address command contains expected fields
   * Edit: `test/cli-smoke.test.ts`
-* [ ] Verify tx command contains expected fields
+* [x] Verify tx command contains expected fields
   * Edit: `test/cli-smoke.test.ts`
-* [ ] Verify `--json` emits parseable JSON
+* [x] Verify `--json` emits parseable JSON
   * Edit: `test/cli-smoke.test.ts`
-* [ ] Verify `--json` errors emit parseable JSON to stderr
+* [x] Verify `--json` errors emit parseable JSON to stderr
   * Edit: `test/cli-smoke.test.ts`
-* [ ] Verify JSON error output matches the PRD error envelope shape
+* [x] Verify JSON error output matches the PRD error envelope shape
   * Edit: `test/cli-smoke.test.ts`
   * Edit: `src/utils/errors.ts`
-* [ ] Add mocked provider/API integration tests
+* [x] Add mocked provider/API integration tests
   * Create: `test/integration-mock.test.ts`
   * Use deterministic Bitcoin mainnet-shaped address and txid fixtures without calling live public APIs
-* [ ] Add `typecheck`, `test`, `lint`, and `build` scripts
+* [x] Add `typecheck`, `test`, `lint`, and `build` scripts
   * Edit: `package.json`
-* [ ] Run full local quality gate:
+* [x] Run full local quality gate:
   * `npm run typecheck`
   * `npm run lint`
   * `npm test`
   * `npm run build`
-* [ ] Confirm no `any` in public functions and API types
+* [x] Confirm no `any` in public functions and API types
   * Review: `src/api/types.ts`, `src/index.ts`, command modules, formatters
 
 ## Task 9 - README and Portfolio Polish

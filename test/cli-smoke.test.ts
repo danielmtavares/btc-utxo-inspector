@@ -148,11 +148,23 @@ describe("cli smoke", () => {
     );
 
     const parsed = JSON.parse(stdout.output) as {
-      utxos: { pagination: { page: number; limit: number } };
+      address: string;
+      network: string;
+      addressType: string;
+      balance: { valueSats: string };
+      utxos: {
+        items: unknown[];
+        pagination: { page: number; limit: number };
+      };
     };
 
     expect(exitCode).toBe(0);
     expect(stderr.output).toBe("");
+    expect(parsed.address).toBe("1BoatSLRHtKNngkdXEeobR76b53LETtpyT");
+    expect(parsed.network).toBe("mainnet");
+    expect(parsed.addressType).toBe("p2pkh");
+    expect(parsed.balance.valueSats).toBe("4250000000");
+    expect(parsed.utxos.items).toEqual([]);
     expect(parsed.utxos.pagination).toEqual({ page: 2, limit: 5, total: 0, totalPages: 0, hasPreviousPage: true, hasNextPage: false, startIndex: 0, endIndex: 0 });
     expect(inspectAddressCommand).toHaveBeenCalledWith({
       address: "1BoatSLRHtKNngkdXEeobR76b53LETtpyT",
@@ -180,6 +192,52 @@ describe("cli smoke", () => {
     expect(exitCode).toBe(0);
     expect(stderr.output).toBe("");
     expect(stdout.output).toContain("Transaction 2222222222222222222222222222222222222222222222222222222222222222");
+    expect(stdout.output).toContain("Status confirmed");
+    expect(stdout.output).toContain("Output Total 49.999 BTC");
+  });
+
+  it("emits parseable json to stdout for the tx command", async () => {
+    const stdout = createMemoryStream();
+    const stderr = createMemoryStream();
+
+    const exitCode = await runCli(
+      [
+        "node",
+        "cli.js",
+        "tx",
+        "2222222222222222222222222222222222222222222222222222222222222222",
+        "--json",
+      ],
+      {
+        inspectAddressCommand: vi.fn(() => Promise.resolve(createAddressResult())),
+        inspectTransactionCommand: vi.fn(() => Promise.resolve(createTransactionResult())),
+        stdout,
+        stderr,
+      },
+    );
+
+    const parsed = JSON.parse(stdout.output) as {
+      txid: string;
+      confirmationStatus: string;
+      totalOutput: { valueSats: string };
+      outputs: { pagination: { page: number; limit: number } };
+    };
+
+    expect(exitCode).toBe(0);
+    expect(stderr.output).toBe("");
+    expect(parsed.txid).toBe("2222222222222222222222222222222222222222222222222222222222222222");
+    expect(parsed.confirmationStatus).toBe("confirmed");
+    expect(parsed.totalOutput.valueSats).toBe("4999900000");
+    expect(parsed.outputs.pagination).toEqual({
+      page: 1,
+      limit: 25,
+      total: 0,
+      totalPages: 0,
+      hasPreviousPage: false,
+      hasNextPage: false,
+      startIndex: 0,
+      endIndex: 0,
+    });
   });
 
   it("writes json errors to stderr and returns the mapped exit code", async () => {
@@ -197,12 +255,16 @@ describe("cli smoke", () => {
     );
 
     const parsed = JSON.parse(stderr.output) as {
-      error: { code: string; message: string };
+      error: { code: string; message: string; details: Record<string, unknown> };
     };
 
     expect(exitCode).toBe(2);
     expect(stdout.output).toBe("");
+    expect(Object.keys(parsed)).toEqual(["error"]);
     expect(parsed.error.code).toBe("INVALID_ADDRESS");
     expect(parsed.error.message).toContain("Invalid Bitcoin mainnet address");
+    expect(parsed.error.details).toEqual({
+      address: "bad",
+    });
   });
 });

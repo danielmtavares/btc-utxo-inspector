@@ -1,0 +1,48 @@
+{
+  "address": "1BoatSLRHtKNngkdXEeobR76b53LETtpyT",
+  "network": "mainnet",
+  "addressType": "p2pkh",
+  "totalReceived": {
+    "btc": "55 BTC",
+    "sats": "5,500,000,000 sats",
+    "valueSats": "5500000000"
+  },
+  "totalSpent": {
+    "btc": "12.5 BTC",
+    "sats": "1,250,000,000 sats",
+    "valueSats": "1250000000"
+  },
+  "balance": {
+    "btc": "42.5 BTC",
+    "sats": "4,250,000,000 sats",
+    "valueSats": "4250000000"
+  },
+  "utxos": {
+    "items": [
+      {
+        "txid": "1111111111111111111111111111111111111111111111111111111111111111",
+        "vout": 0,
+        "outpoint": "1111111111111111111111111111111111111111111111111111111111111111:0",
+        "amount": {
+          "btc": "50 BTC",
+          "sats": "5,000,000,000 sats",
+          "valueSats": "5000000000"
+        },
+        "confirmationStatus": "confirmed",
+        "confirmed": true,
+        "blockHeight": 100000,
+        "scriptType": "unknown"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 25,
+      "total": 1,
+      "totalPages": 1,
+      "hasPreviousPage": false,
+      "hasNextPage": false,
+      "startIndex": 0,
+      "endIndex": 1
+    }
+  }
+}
