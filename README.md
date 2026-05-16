@@ -113,6 +113,8 @@ What it includes:
   - block height when confirmed
   - script type
 
+Address type detection is based on the address encoding. `3...` addresses are reported as `p2sh`; the CLI does not inspect the redeem script, so it cannot distinguish nested SegWit P2SH from other P2SH outputs.
+
 ### `tx`
 
 Inspect a Bitcoin transaction by txid.
@@ -291,6 +293,8 @@ Because this tool depends on a public API, real-world usage can still be affecte
 - network instability
 - external rate limiting
 - alternate Esplora deployments with different operational limits
+
+Treat `--api-url` as trusted input when embedding this package in another application. If user-supplied URLs are accepted in a server or automation service, validate or allowlist them before passing them into the client.
 
 ## Library Usage
 

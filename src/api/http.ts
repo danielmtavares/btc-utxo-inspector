@@ -1,4 +1,4 @@
-import { NotFoundError, ProviderUnavailableError } from "../utils/errors.js";
+import { NotFoundError, ProviderUnavailableError, ResponseValidationError } from "../utils/errors.js";
 import type { ExplorerSource } from "./types.js";
 
 export const DEFAULT_REQUEST_TIMEOUT_MS = 10_000;
@@ -190,13 +190,30 @@ function throwNetworkError(context: RequestContext, error: unknown): never {
   });
 }
 
+async function parseJsonResponse(response: Response, context: RequestContext): Promise<unknown> {
+  try {
+    return await response.json();
+  }
+  catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unable to parse JSON response";
+
+    throw new ResponseValidationError("Provider returned invalid JSON", {
+      ...getProviderDetails(context.source, context.url, { message }),
+    });
+  }
+}
+
 async function handleAttemptError(
   context: RequestContext,
   error: unknown,
   options: ResolvedHttpClientOptions,
   attempt: number,
 ): Promise<void> {
-  if (error instanceof NotFoundError || error instanceof ProviderUnavailableError) {
+  if (
+    error instanceof NotFoundError
+    || error instanceof ProviderUnavailableError
+    || error instanceof ResponseValidationError
+  ) {
     throw error;
   }
 
@@ -221,7 +238,7 @@ async function executeRequestWithRetries(
       const response = await performRequestAttempt(context, options);
 
       if (response.ok) {
-        return await response.json();
+        return await parseJsonResponse(response, context);
       }
 
       if (await retryOnStatusCode(response, options, attempt)) {

@@ -172,6 +172,34 @@ describe("blockstream client", () => {
 });
 
 describe("http client", () => {
+  it("raises response validation failures for invalid json responses", async () => {
+    const headers = new Headers();
+    headers.set("content-type", "application/json");
+    const fetchMock = vi.fn<typeof fetch>(() =>
+      Promise.resolve(
+        new Response("not-json", {
+          headers,
+          status: 200,
+        }),
+      ),
+    );
+    const sleepMock = createResolvedSleepMock();
+    const client = createHttpClient({
+      fetch: fetchMock,
+      sleep: sleepMock,
+    });
+
+    await expect(
+      client.requestJson({
+        source: "blockstream",
+        baseUrl: DEFAULT_BLOCKSTREAM_API_URL,
+        path: "/tx/not-json",
+      }),
+    ).rejects.toBeInstanceOf(ResponseValidationError);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(sleepMock).not.toHaveBeenCalled();
+  });
+
   it("retries retryable 5xx failures with exponential backoff", async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
