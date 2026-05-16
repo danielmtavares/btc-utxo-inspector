@@ -228,19 +228,19 @@ Address command scope: show balance plus UTXOs only. Transaction details remain 
 
 **Goal:** Make the CLI package publish-ready and runnable as a local tool.
 
-* [ ] Configure `tsup` for ESM output and public library exports
+* [x] Configure `tsup` for ESM output and public library exports
   * Create: `tsup.config.ts`
-* [ ] Add `bin` entry for `btc-utxo-inspector`
+* [x] Add `bin` entry for `btc-utxo-inspector`
   * Edit: `package.json`
-* [ ] Add package `exports` for reusable library functions
+* [x] Add package `exports` for reusable library functions
   * Edit: `package.json`
   * Edit: `src/index.ts`
-* [ ] Ensure built CLI keeps executable shebang
+* [x] Ensure built CLI keeps executable shebang
   * Edit: `src/cli.ts`
   * Edit: `tsup.config.ts`
-* [ ] Verify local install/execution flow
+* [x] Verify local install/execution flow
   * Edit if needed: `package.json`
-* [ ] Add package metadata required for publish-readiness
+* [x] Add package metadata required for publish-readiness
   * Edit: `package.json`
 
 This maps to the PRD success criteria around local `npm install`, package execution, publish-readiness, CLI binary exposure, and reusable library exports.

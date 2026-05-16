@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import { runCli } from "../src/cli.js";
+import { mkdtempSync, symlinkSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { pathToFileURL } from "node:url";
+import { isExecutedDirectly, runCli } from "../src/cli.js";
 import { InvalidAddressError } from "../src/utils/errors.js";
 import type { AddressCommandResult } from "../src/commands/address.js";
 import type { TransactionCommandResult } from "../src/commands/tx.js";
@@ -103,6 +107,17 @@ function createTransactionResult(): TransactionCommandResult {
 }
 
 describe("cli smoke", () => {
+  it("detects direct execution through a symlinked bin path", () => {
+    const tempDirectory = mkdtempSync(join(tmpdir(), "btc-utxo-cli-"));
+    const targetPath = join(tempDirectory, "cli.js");
+    const symlinkPath = join(tempDirectory, "btc-utxo-inspector");
+
+    writeFileSync(targetPath, "#!/usr/bin/env node\n");
+    symlinkSync(targetPath, symlinkPath);
+
+    expect(isExecutedDirectly(symlinkPath, pathToFileURL(targetPath).href)).toBe(true);
+  });
+
   it("emits parseable json to stdout for the address command", async () => {
     const stdout = createMemoryStream();
     const stderr = createMemoryStream();

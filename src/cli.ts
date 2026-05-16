@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { pathToFileURL } from "node:url";
+import { realpathSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { Command, CommanderError, Option } from "commander";
 import { inspectAddressCommand } from "./commands/address.js";
 import { inspectTransactionCommand } from "./commands/tx.js";
@@ -131,6 +132,20 @@ function getCliExitCode(error: unknown): number {
   return getExitCode(error);
 }
 
+function resolveRealPath(path: string): string {
+  return realpathSync.native(path);
+}
+
+export function isExecutedDirectly(cliPath: string | undefined, moduleUrl: string): boolean {
+  if (cliPath === undefined) {
+    return false;
+  }
+
+  const modulePath = fileURLToPath(moduleUrl);
+
+  return resolveRealPath(cliPath) === resolveRealPath(modulePath);
+}
+
 export function createCli(runtime: CliRuntime = {}): Command {
   const runAddressCommand = runtime.inspectAddressCommand ?? inspectAddressCommand;
   const runTransactionCommand = runtime.inspectTransactionCommand ?? inspectTransactionCommand;
@@ -181,8 +196,6 @@ export async function runCli(argv: readonly string[], runtime: CliRuntime = {}):
   }
 }
 
-const cliPath = process.argv[1];
-
-if (cliPath !== undefined && import.meta.url === pathToFileURL(cliPath).href) {
+if (isExecutedDirectly(process.argv[1], import.meta.url)) {
   process.exitCode = await runCli(process.argv);
 }
