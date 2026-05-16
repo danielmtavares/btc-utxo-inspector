@@ -61,8 +61,8 @@ function createAddressSummary(): AddressSummary {
             blockHash: "0000000000000000000000000000000000000000000000000000000000000000",
             blockTime: 1700000000,
           },
-          scriptPubKeyType: "unknown",
-          scriptPubKeyAddress: null,
+          scriptPubKeyType: "p2pkh",
+          scriptPubKeyAddress: "1BoatSLRHtKNngkdXEeobR76b53LETtpyT",
         },
       ],
       pagination: {
@@ -120,7 +120,7 @@ describe("inspectAddressCommand", () => {
       confirmationStatus: "confirmed",
       confirmed: true,
       blockHeight: 100000,
-      scriptType: "unknown",
+      scriptType: "p2pkh",
       amount: {
         btc: "50 BTC",
         sats: "5,000,000,000 sats",

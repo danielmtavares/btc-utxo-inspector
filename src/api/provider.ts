@@ -12,6 +12,8 @@ export function createExplorerClient(options: ExplorerClientOptions = {}): Explo
   switch (source) {
     case "blockstream":
       return createBlockstreamClient(options);
+    default:
+      throw new Error(`Unsupported explorer source: ${String(source)}`);
   }
 }
 

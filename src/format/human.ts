@@ -7,8 +7,8 @@ function formatAmount(label: string, amount: AmountSummary): string {
   return `${chalk.bold(label)} ${amount.btc} (${amount.sats})`;
 }
 
-function formatPaginationLine(page: number, totalPages: number, total: number): string {
-  return `${chalk.bold("Page")} ${String(page)}/${String(totalPages || 1)} ${chalk.bold("Items")} ${String(total)}`;
+function formatPaginationLine(label: string, page: number, totalPages: number, total: number): string {
+  return `${chalk.bold(label)} ${chalk.bold("Page")} ${String(page)}/${String(totalPages || 1)} ${chalk.bold("Items")} ${String(total)}`;
 }
 
 function formatBlockLine(blockHeight: number | null, timestamp: string | null): string {
@@ -92,11 +92,11 @@ export function formatHumanAddress(result: AddressCommandResult): string {
     formatAmount("Spent", result.totalSpent),
     formatAmount("Balance", result.balance),
     formatPaginationLine(
+      "UTXOs",
       result.utxos.pagination.page,
       result.utxos.pagination.totalPages,
       result.utxos.pagination.total,
     ),
-    chalk.bold("UTXOs"),
   ];
 
   if (result.utxos.items.length === 0) {
@@ -123,6 +123,12 @@ export function formatHumanTransaction(result: TransactionCommandResult): string
     formatAmount("Output Total", result.totalOutput),
     result.fee === null ? `${chalk.bold("Fee")} unavailable` : formatAmount("Fee", result.fee),
     `${chalk.bold("Inputs")} ${String(result.vinCount)}`,
+    formatPaginationLine(
+      "Inputs",
+      result.inputs.pagination.page,
+      result.inputs.pagination.totalPages,
+      result.inputs.pagination.total,
+    ),
   ];
 
   if (result.inputs.items.length === 0) {
@@ -147,6 +153,7 @@ export function formatHumanTransaction(result: TransactionCommandResult): string
 
   lines.push(
     formatPaginationLine(
+      "Outputs",
       result.outputs.pagination.page,
       result.outputs.pagination.totalPages,
       result.outputs.pagination.total,
