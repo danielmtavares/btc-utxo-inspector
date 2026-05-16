@@ -143,24 +143,24 @@ Provider abstraction is required for future mempool.space or testnet support, bu
 
 **Goal:** Implement `btc-utxo-inspector address <address>`.
 
-* [ ] Add address command module
+* [x] Add address command module
   * Create: `src/commands/address.ts`
-* [ ] Wire address command into CLI
+* [x] Wire address command into CLI
   * Edit: `src/cli.ts`
-* [ ] Reject invalid Bitcoin mainnet addresses before provider calls
+* [x] Reject invalid Bitcoin mainnet addresses before provider calls
   * Edit: `src/commands/address.ts`
   * Edit: `src/utils/address.ts`
-* [ ] Fetch address stats and UTXOs via the Blockstream provider abstraction
+* [x] Fetch address stats and UTXOs via the Blockstream provider abstraction
   * Edit: `src/commands/address.ts`
   * Edit: `src/api/provider.ts`
-* [ ] Compute total received, total spent, and current balance in BTC and sats
+* [x] Compute total received, total spent, and current balance in BTC and sats
   * Edit: `src/commands/address.ts`
-* [ ] Include paginated UTXO details: amount, `txid:vout`, confirmation status, block height, and script type when available
+* [x] Include paginated UTXO details: amount, `txid:vout`, confirmation status, block height, and script type when available
   * Edit: `src/commands/address.ts`
   * Edit: `src/utils/pagination.ts`
-* [ ] Return normalized command result instead of printing directly
+* [x] Return normalized command result instead of printing directly
   * Edit: `src/commands/address.ts`
-* [ ] Add address summary unit tests
+* [x] Add address summary unit tests
   * Create: `test/address.test.ts`
 
 Address command scope: show balance plus UTXOs only. Transaction details remain scoped to `tx <txid>`.

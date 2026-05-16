@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { pathToFileURL } from "node:url";
 import { Command } from "commander";
+import { inspectAddressCommand } from "./commands/address.js";
 import { packageVersion } from "./version.js";
 
 export function createCli(): Command {
@@ -12,7 +13,14 @@ export function createCli(): Command {
   );
   program.version(packageVersion);
 
-  program.command("address").description("Inspect a Bitcoin address");
+  program
+    .command("address")
+    .description("Inspect a Bitcoin address")
+    .argument("<address>", "Bitcoin mainnet address")
+    .action(async (address: string) => {
+      const result = await inspectAddressCommand({ address });
+      console.dir(result, { depth: null });
+    });
   program.command("tx").description("Inspect a Bitcoin transaction");
 
   return program;

@@ -1,5 +1,8 @@
 export { packageVersion } from "./version.js";
 export { createCli } from "./cli.js";
+export {
+  inspectAddressCommand,
+} from "./commands/address.js";
 export type {
   AddressSummaryRequest,
   AddressStatistics,
@@ -22,6 +25,12 @@ export type {
   Utxo,
   UtxoStatus,
 } from "./api/types.js";
+export type {
+  AddressAmountSummary,
+  AddressCommandInput,
+  AddressCommandResult,
+  AddressCommandUtxo,
+} from "./commands/address.js";
 export {
   createBlockstreamClient,
   DEFAULT_BLOCKSTREAM_API_URL,
