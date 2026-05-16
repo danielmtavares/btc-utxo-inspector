@@ -194,33 +194,33 @@ Address command scope: show balance plus UTXOs only. Transaction details remain 
 
 **Goal:** Add clean human-readable and JSON output modes and wire all MVP flags.
 
-* [ ] Add human-readable formatter using `chalk`
+* [x] Add human-readable formatter using `chalk`
   * Create: `src/format/human.ts`
-* [ ] Add JSON formatter
+* [x] Add JSON formatter
   * Create: `src/format/json.ts`
-* [ ] Support `--json`
+* [x] Support `--json`
   * Edit: `src/cli.ts`
-* [ ] Support `--source blockstream`
+* [x] Support `--source blockstream`
   * Edit: `src/cli.ts`
   * Edit: `src/commands/address.ts`
   * Edit: `src/commands/tx.ts`
-* [ ] Support `--api-url <url>`
+* [x] Support `--api-url <url>`
   * Edit: `src/cli.ts`
   * Edit: `src/api/provider.ts`
-* [ ] Support `--limit <number>` and `--page <number>` with PRD defaults of `25` and `1`
+* [x] Support `--limit <number>` and `--page <number>` with PRD defaults of `25` and `1`
   * Edit: `src/cli.ts`
   * Edit: `src/commands/address.ts`
   * Edit: `src/commands/tx.ts`
-* [ ] Ensure JSON output is valid parseable stdout
+* [x] Ensure JSON output is valid parseable stdout
   * Edit: `src/format/json.ts`
   * Create/update: `test/cli-smoke.test.ts`
-* [ ] Emit JSON errors to stderr when `--json` is set
+* [x] Emit JSON errors to stderr when `--json` is set
   * Edit: `src/cli.ts`
   * Edit: `src/utils/errors.ts`
-* [ ] Keep all errors on stderr
+* [x] Keep all errors on stderr
   * Edit: `src/cli.ts`
   * Edit: `src/utils/errors.ts`
-* [ ] Map invalid address, not found, provider failure, validation failure, and unexpected errors to non-zero exit codes
+* [x] Map invalid address, not found, provider failure, validation failure, and unexpected errors to non-zero exit codes
   * Edit: `src/utils/errors.ts`
   * Edit: `src/cli.ts`
 
