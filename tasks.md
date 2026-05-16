@@ -169,25 +169,25 @@ Address command scope: show balance plus UTXOs only. Transaction details remain 
 
 **Goal:** Implement `btc-utxo-inspector tx <txid>`.
 
-* [ ] Add transaction command module
+* [x] Add transaction command module
   * Create: `src/commands/tx.ts`
-* [ ] Wire tx command into CLI
+* [x] Wire tx command into CLI
   * Edit: `src/cli.ts`
-* [ ] Fetch transaction by txid via the Blockstream provider abstraction
+* [x] Fetch transaction by txid via the Blockstream provider abstraction
   * Edit: `src/commands/tx.ts`
   * Edit: `src/api/provider.ts`
-* [ ] Include confirmation status, block height, and timestamp when available
+* [x] Include confirmation status, block height, and timestamp when available
   * Edit: `src/commands/tx.ts`
-* [ ] Include full input and output details with pagination for large transactions
+* [x] Include full input and output details with pagination for large transactions
   * Edit: `src/commands/tx.ts`
   * Edit: `src/utils/pagination.ts`
-* [ ] Include total input value only when available directly from the provider
+* [x] Include total input value only when available directly from the provider
   * Edit: `src/commands/tx.ts`
-* [ ] Include total output value
+* [x] Include total output value
   * Edit: `src/commands/tx.ts`
-* [ ] Include fee in sats and BTC only when provided directly by the API
+* [x] Include fee in sats and BTC only when provided directly by the API
   * Edit: `src/commands/tx.ts`
-* [ ] Add transaction summary tests
+* [x] Add transaction summary tests
   * Create: `test/tx.test.ts`
 
 ## Task 6 - Output Formatting, CLI Flags, and Errors

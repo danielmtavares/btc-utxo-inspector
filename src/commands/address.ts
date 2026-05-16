@@ -1,32 +1,27 @@
-import { createExplorerClient } from "../api/provider.js";
-import { formatBtcAmount, formatSatsAmount } from "../utils/sats.js";
 import { parseBitcoinMainnetAddress } from "../utils/address.js";
-import { InvalidPaginationError } from "../utils/errors.js";
 import type {
   BitcoinAddressType,
   BitcoinNetwork,
   BitcoinScriptType,
-  ExplorerClient,
   ExplorerSource,
   PaginatedCollection,
-  PaginationInput,
   Utxo,
 } from "../api/types.js";
-
-const DEFAULT_PAGE = 1;
-const DEFAULT_LIMIT = 25;
-
-export interface AddressAmountSummary {
-  btc: string;
-  sats: string;
-  valueSats: bigint;
-}
+import {
+  createAmountSummary,
+  getPagination,
+  resolveClient,
+} from "./shared.js";
+import type {
+  AmountSummary,
+  CommandClientDependencies,
+} from "./shared.js";
 
 export interface AddressCommandUtxo {
   txid: string;
   vout: number;
   outpoint: string;
-  amount: AddressAmountSummary;
+  amount: AmountSummary;
   confirmationStatus: "confirmed" | "unconfirmed";
   confirmed: boolean;
   blockHeight: number | null;
@@ -37,9 +32,9 @@ export interface AddressCommandResult {
   address: string;
   network: BitcoinNetwork;
   addressType: BitcoinAddressType;
-  totalReceived: AddressAmountSummary;
-  totalSpent: AddressAmountSummary;
-  balance: AddressAmountSummary;
+  totalReceived: AmountSummary;
+  totalSpent: AmountSummary;
+  balance: AmountSummary;
   utxos: PaginatedCollection<AddressCommandUtxo>;
 }
 
@@ -49,36 +44,6 @@ export interface AddressCommandInput {
   apiUrl?: string;
   page?: number;
   limit?: number;
-}
-
-interface AddressCommandDependencies {
-  createClient?: (options: {
-    source?: ExplorerSource;
-    baseUrl?: string;
-  }) => ExplorerClient;
-}
-
-function createAmountSummary(valueSats: bigint): AddressAmountSummary {
-  return {
-    btc: formatBtcAmount(valueSats),
-    sats: formatSatsAmount(valueSats),
-    valueSats,
-  };
-}
-
-function getPagination(input: AddressCommandInput): PaginationInput {
-  const page = input.page ?? DEFAULT_PAGE;
-  const limit = input.limit ?? DEFAULT_LIMIT;
-
-  if (!Number.isInteger(page) || page <= 0) {
-    throw new InvalidPaginationError({ page });
-  }
-
-  if (!Number.isInteger(limit) || limit <= 0) {
-    throw new InvalidPaginationError({ limit });
-  }
-
-  return { page, limit };
 }
 
 function mapUtxoCollection(
@@ -99,30 +64,9 @@ function mapUtxoCollection(
   };
 }
 
-function resolveClient(
-  input: AddressCommandInput,
-  dependencies: AddressCommandDependencies,
-): ExplorerClient {
-  const createClient = dependencies.createClient ?? createExplorerClient;
-  const options: {
-    source?: ExplorerSource;
-    baseUrl?: string;
-  } = {};
-
-  if (input.source !== undefined) {
-    options.source = input.source;
-  }
-
-  if (input.apiUrl !== undefined) {
-    options.baseUrl = input.apiUrl;
-  }
-
-  return createClient(options);
-}
-
 export async function inspectAddressCommand(
   input: AddressCommandInput,
-  dependencies: AddressCommandDependencies = {},
+  dependencies: CommandClientDependencies = {},
 ): Promise<AddressCommandResult> {
   const parsedAddress = parseBitcoinMainnetAddress(input.address);
   const client = resolveClient(input, dependencies);

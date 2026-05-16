@@ -2,6 +2,7 @@
 import { pathToFileURL } from "node:url";
 import { Command } from "commander";
 import { inspectAddressCommand } from "./commands/address.js";
+import { inspectTransactionCommand } from "./commands/tx.js";
 import { packageVersion } from "./version.js";
 
 export function createCli(): Command {
@@ -21,7 +22,14 @@ export function createCli(): Command {
       const result = await inspectAddressCommand({ address });
       console.dir(result, { depth: null });
     });
-  program.command("tx").description("Inspect a Bitcoin transaction");
+  program
+    .command("tx")
+    .description("Inspect a Bitcoin transaction")
+    .argument("<txid>", "Bitcoin transaction id")
+    .action(async (txid: string) => {
+      const result = await inspectTransactionCommand({ txid });
+      console.dir(result, { depth: null });
+    });
 
   return program;
 }

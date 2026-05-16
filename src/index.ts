@@ -3,6 +3,9 @@ export { createCli } from "./cli.js";
 export {
   inspectAddressCommand,
 } from "./commands/address.js";
+export {
+  inspectTransactionCommand,
+} from "./commands/tx.js";
 export type {
   AddressSummaryRequest,
   AddressStatistics,
@@ -26,11 +29,23 @@ export type {
   UtxoStatus,
 } from "./api/types.js";
 export type {
-  AddressAmountSummary,
+  AmountSummary,
+  CommandClientDependencies,
+  CommandClientInput,
+  PaginationCommandInput,
+} from "./commands/shared.js";
+export type {
   AddressCommandInput,
   AddressCommandResult,
   AddressCommandUtxo,
 } from "./commands/address.js";
+export type {
+  TransactionCommandInput,
+  TransactionCommandInputItem,
+  TransactionCommandOutputItem,
+  TransactionCommandPrevout,
+  TransactionCommandResult,
+} from "./commands/tx.js";
 export {
   createBlockstreamClient,
   DEFAULT_BLOCKSTREAM_API_URL,
