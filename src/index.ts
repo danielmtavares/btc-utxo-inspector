@@ -1,5 +1,5 @@
 export { packageVersion } from "./version.js";
-export { createCli } from "./cli.js";
+export { createCli, runCli } from "./cli.js";
 export {
   inspectAddressCommand,
 } from "./commands/address.js";

@@ -2,17 +2,35 @@
   "name": "btc-utxo-inspector",
   "version": "0.0.1",
   "description": "A CLI for inspecting Bitcoin addresses, summarizing UTXOs and balances, and analyzing transaction details using public blockchain APIs.",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "btc-utxo-inspector": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "sideEffects": false,
   "type": "module",
   "engines": {
     "node": ">=24.15.0"
   },
   "scripts": {
     "dev": "node --import tsx src/cli.ts",
-    "start": "node --import tsx src/cli.ts",
-    "build": "tsup src/cli.ts src/index.ts --format esm --out-dir dist --clean --sourcemap",
+    "start": "node dist/cli.js",
+    "build": "tsup --config tsup.config.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "prepack": "npm run build",
     "test": "vitest",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
@@ -20,9 +38,18 @@
     "type": "git",
     "url": "git+https://github.com/danielmtavares/btc-utxo-inspector.git"
   },
-  "keywords": [],
+  "keywords": [
+    "bitcoin",
+    "blockstream",
+    "cli",
+    "typescript",
+    "utxo"
+  ],
   "author": "",
   "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  },
   "bugs": {
     "url": "https://github.com/danielmtavares/btc-utxo-inspector/issues"
   },
