@@ -86,7 +86,7 @@ btc-utxo-inspector/
   * Create: `src/api/schemas.ts`
 * [x] Add Bitcoin mainnet address validation
   * Create: `src/utils/address.ts`
-  * Support: legacy P2PKH, nested SegWit P2SH, native SegWit, and Taproot
+  * Support: legacy P2PKH, P2SH address encoding, native SegWit, and Taproot
 * [x] Add sats/BTC conversion helpers
   * Create: `src/utils/sats.ts`
 * [x] Add pagination helpers for UTXOs, inputs, and outputs

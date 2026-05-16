@@ -99,7 +99,7 @@ Large input or output sets must be limited by default and support pagination fla
 ### Flags
 - `--json` — emit machine-readable JSON to stdout
 - `--source blockstream` — select the data provider; Blockstream is the only implemented MVP provider
-- `--api-url <url>` — override the provider base URL for tests, local mocks, and future network support
+- `--api-url <url>` — override the provider base URL for tests, local mocks, and future network support; embedding applications should validate or allowlist user-supplied URLs before passing them to the client
 - `--limit <number>` — limit displayed UTXOs, inputs, outputs, or other pageable collections
 - `--page <number>` — select a page for pageable collections
 
@@ -140,7 +140,7 @@ Errors must be written to stderr. When `--json` is set, errors must be emitted a
 - Bitcoin mainnet only for MVP.
 - Supported address formats:
   - Legacy P2PKH (`1...`)
-  - Nested SegWit P2SH (`3...`)
+  - P2SH (`3...`); this validates the address encoding but does not inspect redeem scripts to distinguish nested SegWit from other P2SH outputs
   - Native SegWit P2WPKH/P2WSH (`bc1q...`)
   - Taproot P2TR (`bc1p...`)
 - Invalid addresses must be rejected locally before any provider request is made.
