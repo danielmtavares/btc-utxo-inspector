@@ -1,6 +1,9 @@
+import { fileURLToPath } from "node:url";
 import { describe, expect, it, vi } from "vitest";
 import { InvalidAddressError, InvalidPaginationError } from "../src/utils/errors.js";
 import { inspectAddressCommand } from "../src/commands/address.js";
+import { formatHumanAddress } from "../src/format/human.js";
+import { formatJson } from "../src/format/json.js";
 import type { AddressSummary, ExplorerClient } from "../src/api/types.js";
 
 function createExplorerClient(summary: AddressSummary): {
@@ -124,6 +127,40 @@ describe("inspectAddressCommand", () => {
         valueSats: 5000000000n,
       },
     });
+  });
+
+  it("matches the human-readable output snapshot", async () => {
+    const summary = createAddressSummary();
+    const { client } = createExplorerClient(summary);
+    const result = await inspectAddressCommand(
+      {
+        address: summary.address,
+      },
+      {
+        createClient: () => client,
+      },
+    );
+
+    await expect(formatHumanAddress(result)).toMatchFileSnapshot(
+      fileURLToPath(new URL("./snapshots/address-human-output.txt", import.meta.url)),
+    );
+  });
+
+  it("matches the json output snapshot", async () => {
+    const summary = createAddressSummary();
+    const { client } = createExplorerClient(summary);
+    const result = await inspectAddressCommand(
+      {
+        address: summary.address,
+      },
+      {
+        createClient: () => client,
+      },
+    );
+
+    await expect(formatJson(result)).toMatchFileSnapshot(
+      fileURLToPath(new URL("./snapshots/address-json-output.json", import.meta.url)),
+    );
   });
 
   it("uses pagination defaults and parsed address metadata", async () => {
