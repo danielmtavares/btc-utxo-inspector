@@ -288,27 +288,27 @@ This maps to the PRD success criteria around local `npm install`, package execut
 
 **Goal:** Make the repo readable and evaluable without reading the source.
 
-* [ ] Write project overview
+* [x] Write project overview
   * Edit: `README.md`
-* [ ] Explain why the project exists
+* [x] Explain why the project exists
   * Edit: `README.md`
-* [ ] Add local install and execution instructions
+* [x] Add local install and execution instructions
   * Edit: `README.md`
-* [ ] Add address command examples
+* [x] Add address command examples
   * Edit: `README.md`
-* [ ] Add tx command examples
+* [x] Add tx command examples
   * Edit: `README.md`
-* [ ] Add JSON output examples (`--json`)
+* [x] Add JSON output examples (`--json`)
   * Edit: `README.md`
-* [ ] Document `--source blockstream`, `--api-url`, `--limit`, and `--page`
+* [x] Document `--source blockstream`, `--api-url`, `--limit`, and `--page`
   * Edit: `README.md`
-* [ ] Document exit codes
+* [x] Document exit codes
   * Edit: `README.md`
-* [ ] Add note about public API usage, rate limits, timeout, and retry behavior
+* [x] Add note about public API usage, rate limits, timeout, and retry behavior
   * Edit: `README.md`
-* [ ] Add example terminal output for default human-readable mode
+* [x] Add example terminal output for default human-readable mode
   * Edit: `README.md`
-* [ ] Add “Not included in MVP” section
+* [x] Add “Not included in MVP” section
   * Edit: `README.md`
-* [ ] Add future improvements section
+* [x] Add future improvements section
   * Edit: `README.md`
