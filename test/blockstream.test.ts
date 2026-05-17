@@ -269,3 +269,68 @@ describe("http client", () => {
     expect(sleepMock).toHaveBeenNthCalledWith(2, 400);
   });
 });
+
+describe.runIf(process.env.LIVE_API_TESTS === "1")("live blockstream api (opt-in)", () => {
+  it("calls live address endpoints and prints normalized output", async () => {
+    const client = createBlockstreamClient();
+    const summary = await client.getAddressSummary({
+      address: "1BoatSLRHtKNngkdXEeobR76b53LETtpyT",
+      addressType: "p2pkh",
+      pagination: {
+        page: 1,
+        limit: 5,
+      },
+    });
+
+    console.log("LIVE_ADDRESS_SUMMARY", {
+      address: summary.address,
+      network: summary.network,
+      addressType: summary.addressType,
+      totalReceivedSats: summary.totalReceivedSats.toString(),
+      totalSpentSats: summary.totalSpentSats.toString(),
+      balanceSats: summary.balanceSats.toString(),
+      utxoCount: summary.utxos.pagination.total,
+      sampleUtxos: summary.utxos.items.map(utxo => ({
+        outpoint: utxo.outpoint,
+        valueSats: utxo.valueSats.toString(),
+        status: utxo.status,
+      })),
+    });
+
+    expect(summary.address).toBe("1BoatSLRHtKNngkdXEeobR76b53LETtpyT");
+    expect(summary.network).toBe("mainnet");
+  });
+
+  it("calls live tx endpoint and prints normalized output", async () => {
+    const client = createBlockstreamClient();
+    const summary = await client.getTransactionSummary({
+      txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+      pagination: {
+        page: 1,
+        limit: 5,
+      },
+    });
+
+    console.log("LIVE_TX_SUMMARY", {
+      txid: summary.txid,
+      confirmationStatus: summary.confirmationStatus,
+      confirmed: summary.confirmed,
+      blockHeight: summary.blockHeight,
+      blockTime: summary.blockTime,
+      timestamp: summary.timestamp,
+      totalInputSats: summary.totalInputSats?.toString() ?? null,
+      totalOutputSats: summary.totalOutputSats.toString(),
+      feeSats: summary.feeSats?.toString() ?? null,
+      inputCount: summary.inputs.pagination.total,
+      outputCount: summary.outputs.pagination.total,
+      sampleOutputs: summary.outputs.items.map(output => ({
+        index: output.index,
+        valueSats: output.valueSats.toString(),
+        scriptType: output.scriptPubKeyType,
+        scriptAddress: output.scriptAddress,
+      })),
+    });
+
+    expect(summary.txid).toBe("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b");
+  });
+});

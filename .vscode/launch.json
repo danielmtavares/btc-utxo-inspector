@@ -39,11 +39,39 @@
       "type": "node",
       "request": "launch",
       "name": "Debug Current Test",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["vitest", "run"],
-      "args": ["${relativeFile}"],
+      "program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
+      "args": [
+        "run",
+        "${relativeFile}",
+        "--no-file-parallelism",
+        "--test-timeout=0"
+      ],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
+      "autoAttachChildProcesses": true,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Live Blockstream Tests",
+      "program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
+      "args": [
+        "run",
+        "test/blockstream.test.ts",
+        "-t",
+        "live blockstream",
+        "--no-file-parallelism",
+        "--test-timeout=0"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "autoAttachChildProcesses": true,
+      "smartStep": true,
+      "env": {
+        "LIVE_API_TESTS": "1"
+      },
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
     }
   ],
