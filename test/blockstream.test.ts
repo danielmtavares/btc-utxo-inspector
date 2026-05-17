@@ -291,7 +291,7 @@ describe.runIf(process.env.LIVE_API_TESTS === "1")("live blockstream api (opt-in
       balanceSats: summary.balanceSats.toString(),
       utxoCount: summary.utxos.pagination.total,
       sampleUtxos: summary.utxos.items.map(utxo => ({
-        outpoint: utxo.outpoint,
+        outpoint: `${utxo.txid}:${String(utxo.vout)}`,
         valueSats: utxo.valueSats.toString(),
         status: utxo.status,
       })),
@@ -313,7 +313,7 @@ describe.runIf(process.env.LIVE_API_TESTS === "1")("live blockstream api (opt-in
 
     console.log("LIVE_TX_SUMMARY", {
       txid: summary.txid,
-      confirmationStatus: summary.confirmationStatus,
+      confirmationStatus: summary.confirmed ? "confirmed" : "unconfirmed",
       confirmed: summary.confirmed,
       blockHeight: summary.blockHeight,
       blockTime: summary.blockTime,
@@ -323,11 +323,11 @@ describe.runIf(process.env.LIVE_API_TESTS === "1")("live blockstream api (opt-in
       feeSats: summary.feeSats?.toString() ?? null,
       inputCount: summary.inputs.pagination.total,
       outputCount: summary.outputs.pagination.total,
-      sampleOutputs: summary.outputs.items.map(output => ({
-        index: output.index,
+      sampleOutputs: summary.outputs.items.map((output, index) => ({
+        index,
         valueSats: output.valueSats.toString(),
         scriptType: output.scriptPubKeyType,
-        scriptAddress: output.scriptAddress,
+        scriptAddress: output.scriptPubKeyAddress,
       })),
     });
 
