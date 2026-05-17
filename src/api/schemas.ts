@@ -21,7 +21,7 @@ export const BlockstreamAddressSchema = z
 export const BlockstreamUtxoStatusSchema = z
   .object({
     confirmed: z.boolean(),
-    block_height: z.number().int().positive().optional(),
+    block_height: z.number().int().nonnegative().optional(),
     block_hash: z.string().optional(),
     block_time: z.number().int().positive().optional(),
   })
@@ -82,7 +82,7 @@ export const BlockstreamTxVoutSchema = z
 export const BlockstreamTxStatusSchema = z
   .object({
     confirmed: z.boolean(),
-    block_height: z.number().int().positive().optional(),
+    block_height: z.number().int().nonnegative().optional(),
     block_hash: z.string().optional(),
     block_time: z.number().int().positive().optional(),
   })
