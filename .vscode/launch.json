@@ -1,0 +1,65 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug CLI (TypeScript)",
+      "runtimeArgs": ["--import", "tsx"],
+      "program": "${workspaceFolder}/src/cli.ts",
+      "args": ["--help"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug CLI: address / tx",
+      "runtimeArgs": ["--import", "tsx"],
+      "program": "${workspaceFolder}/src/cli.ts",
+      "args": ["${input:cliCommand}", "${input:cliTarget}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug CLI (built)",
+      "program": "${workspaceFolder}/dist/cli.js",
+      "preLaunchTask": "npm: build",
+      "args": ["--help"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Current Test",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vitest", "run"],
+      "args": ["${relativeFile}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "cliCommand",
+      "type": "pickString",
+      "description": "CLI subcommand",
+      "options": ["address", "tx"],
+      "default": "address"
+    },
+    {
+      "id": "cliTarget",
+      "type": "promptString",
+      "description": "Bitcoin address or transaction id",
+      "default": "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4"
+    }
+  ]
+}
