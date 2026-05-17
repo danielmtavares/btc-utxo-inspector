@@ -12,6 +12,7 @@ export const BlockstreamAddressStatsSchema = z
 
 export const BlockstreamAddressSchema = z
   .object({
+    address: z.string(),
     chain_stats: BlockstreamAddressStatsSchema,
     mempool_stats: BlockstreamAddressStatsSchema,
   })

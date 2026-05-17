@@ -16,8 +16,31 @@ describe("blockstream schemas", () => {
     const fixture = loadFixture("address.json");
     const parsed = BlockstreamAddressSchema.parse(fixture);
 
+    expect(parsed.address).toBe("1BoatSLRHtKNngkdXEeobR76b53LETtpyT");
     expect(parsed.chain_stats.funded_txo_sum).toBe(5250000000);
     expect(parsed.mempool_stats.tx_count).toBe(1);
+  });
+
+  it("parses live Blockstream address responses", () => {
+    const parsed = BlockstreamAddressSchema.parse({
+      address: "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4",
+      chain_stats: {
+        funded_txo_count: 84,
+        funded_txo_sum: 907923,
+        spent_txo_count: 84,
+        spent_txo_sum: 907923,
+        tx_count: 146,
+      },
+      mempool_stats: {
+        funded_txo_count: 0,
+        funded_txo_sum: 0,
+        spent_txo_count: 0,
+        spent_txo_sum: 0,
+        tx_count: 0,
+      },
+    });
+
+    expect(parsed.address).toBe("bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4");
   });
 
   it("parses utxos", () => {
