@@ -7,7 +7,7 @@ import { inspectTransactionCommand } from "./commands/tx.js";
 import { formatHumanAddress, formatHumanTransaction } from "./format/human.js";
 import { formatJson } from "./format/json.js";
 import { getExitCode, InvalidPaginationError, toErrorEnvelope } from "./utils/errors.js";
-import { packageVersion } from "./version.js";
+import packageJson from "../package.json" with { type: "json" };
 import type { ExplorerSource } from "./api/types.js";
 import type { AddressCommandInput, AddressCommandResult } from "./commands/address.js";
 import type { TransactionCommandInput, TransactionCommandResult } from "./commands/tx.js";
@@ -156,7 +156,7 @@ export function createCli(runtime: CliRuntime = {}): Command {
   program.description(
     "Inspect Bitcoin mainnet addresses and transactions from the terminal.",
   );
-  program.version(packageVersion);
+  program.version(packageJson.version);
   program.exitOverride();
 
   addCommonCommandOptions(

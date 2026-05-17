@@ -1,4 +1,3 @@
-export { packageVersion } from "./version.js";
 export { createCli, runCli } from "./cli.js";
 export {
   inspectAddressCommand,
