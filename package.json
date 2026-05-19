@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://github.com/danielmtavares/btc-utxo-inspector/issues"
   },
-  "license": "ISC",
+  "license": "MIT",
   "author": "Daniel Tavares",
   "repository": {
     "type": "git",
