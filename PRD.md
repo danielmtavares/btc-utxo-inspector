@@ -243,7 +243,7 @@ The MVP is complete when:
 - [ ] Invalid Bitcoin mainnet addresses are rejected before provider requests
 - [ ] Unit tests cover sats conversion, address validation, API response normalization, pagination, retry/backoff behavior, and address summary logic
 - [ ] Snapshot tests verify expected human-readable and JSON output
-- [ ] Linting passes with Microsoft-aligned TypeScript naming and style rules
+- [ ] Linting passes with idiomatic TypeScript naming and style rules
 - [ ] Integration tests use mocked provider/API responses and deterministic fixtures
 - [ ] At least one end-to-end CLI smoke test passes against mocked Bitcoin address and txid fixtures
 - [ ] README includes install steps, example commands, and example output
