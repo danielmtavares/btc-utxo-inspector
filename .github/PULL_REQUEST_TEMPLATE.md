@@ -6,6 +6,6 @@
 
 ## Verification
 
-- [ ] `npm run check`
+- [ ] `pnpm check`
 
 ## Risk

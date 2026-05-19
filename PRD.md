@@ -225,8 +225,8 @@ Blockstream Esplora is a public, unauthenticated API. It's suitable for a portfo
 **Provider abstraction**
 Only Blockstream Esplora is implemented for MVP, but command handlers should depend on normalized domain models rather than provider-specific response shapes. This keeps future mempool.space or testnet support from leaking into CLI rendering logic.
 
-**Linting and naming conventions**
-Use ESLint with TypeScript-aware rules. Naming conventions should follow the useful parts of the Microsoft TypeScript repo style: PascalCase for type-like names, no `I` prefix for interfaces, camelCase for functions, parameters, properties, and local variables, no leading underscore for private members, and whole-word names where practical. External provider fields may keep their source API casing when represented in response schemas.
+**Linting and formatting**
+Use `oxlint` for JavaScript/TypeScript linting and `oxfmt` for formatting. Naming should remain idiomatic TypeScript: PascalCase for type-like names, camelCase for functions, parameters, properties, and local variables, and whole-word names where practical. External provider fields may keep their source API casing when represented in response schemas.
 
 ---
 
@@ -234,7 +234,7 @@ Use ESLint with TypeScript-aware rules. Naming conventions should follow the use
 
 The MVP is complete when:
 
-- [ ] Local `npm install` installs dependencies cleanly
+- [ ] Local `pnpm install` installs dependencies cleanly
 - [ ] Local package execution exposes the CLI binary successfully
 - [ ] `btc-utxo-inspector address <address>` returns correct, readable output
 - [ ] `btc-utxo-inspector tx <txid>` returns correct, readable output
