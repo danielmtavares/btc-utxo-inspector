@@ -4,16 +4,8 @@ import type {
   TransactionInput,
   TransactionOutput,
 } from "../api/types.js";
-import {
-  createAmountSummary,
-  getPagination,
-  resolveClient,
-} from "./shared.js";
-import type {
-  AmountSummary,
-  CommandClientDependencies,
-  CommandClientInput,
-} from "./shared.js";
+import { createAmountSummary, getPagination, resolveClient } from "./shared.js";
+import type { AmountSummary, CommandClientDependencies, CommandClientInput } from "./shared.js";
 
 export interface TransactionCommandInput extends CommandClientInput {
   txid: string;

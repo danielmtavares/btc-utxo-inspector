@@ -2,42 +2,6 @@
   "name": "btc-utxo-inspector",
   "version": "0.0.1",
   "description": "A CLI for inspecting Bitcoin addresses, summarizing UTXOs and balances, and analyzing transaction details using public blockchain APIs.",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "bin": {
-    "btc-utxo-inspector": "./dist/cli.js"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist",
-    "LICENSE",
-    "README.md"
-  ],
-  "sideEffects": false,
-  "type": "module",
-  "engines": {
-    "node": ">=24.15.0"
-  },
-  "scripts": {
-    "dev": "node --import tsx src/cli.ts",
-    "start": "node dist/cli.js",
-    "build": "tsup --config tsup.config.ts",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "prepack": "npm run build",
-    "test": "vitest",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/danielmtavares/btc-utxo-inspector.git"
-  },
   "keywords": [
     "bitcoin",
     "blockstream",
@@ -45,29 +9,68 @@
     "typescript",
     "utxo"
   ],
-  "author": "",
-  "license": "ISC",
-  "publishConfig": {
-    "access": "public"
-  },
+  "homepage": "https://github.com/danielmtavares/btc-utxo-inspector#readme",
   "bugs": {
     "url": "https://github.com/danielmtavares/btc-utxo-inspector/issues"
   },
-  "homepage": "https://github.com/danielmtavares/btc-utxo-inspector#readme",
+  "license": "ISC",
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielmtavares/btc-utxo-inspector.git"
+  },
+  "bin": {
+    "btc-utxo-inspector": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "audit:prod": "npm audit --omit=dev --audit-level=high",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm test -- --run && npm run build",
+    "dev": "node --import tsx src/cli.ts",
+    "build": "tsup --config tsup.config.ts",
+    "format": "oxfmt \"*.{json,js,ts}\" \"src/**/*.{ts,json}\" \"test/**/*.{ts,json}\" \".github/**/*.{md,yml,yaml}\"",
+    "format:check": "oxfmt --check \"*.{json,js,ts}\" \"src/**/*.{ts,json}\" \"test/**/*.{ts,json}\" \".github/**/*.{md,yml,yaml}\"",
+    "lint": "oxlint . --import-plugin --promise-plugin --vitest-plugin --deny-warnings",
+    "lint:fix": "oxlint . --import-plugin --promise-plugin --vitest-plugin --fix",
+    "prepare": "git config core.hooksPath .githooks",
+    "prepack": "npm run build",
+    "start": "node dist/cli.js",
+    "test": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
   "dependencies": {
     "chalk": "^5.6.2",
     "commander": "^14.0.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^25.8.0",
-    "eslint": "^10.4.0",
+    "oxfmt": "^0.51.0",
+    "oxlint": "^1.66.0",
     "tsup": "^8.5.1",
     "tsx": "^4.22.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.59.3",
     "vitest": "^4.1.6"
+  },
+  "engines": {
+    "node": ">=24.15.0"
   }
 }

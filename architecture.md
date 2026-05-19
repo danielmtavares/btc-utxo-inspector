@@ -97,4 +97,5 @@ flowchart TB
 | `src/api/blockstream.ts` | HTTP + zod validate + map to domain types |
 | `src/format/*` | Human-readable or JSON output to stdout |
 | `src/utils/*` | Address validation, pagination, sats/BTC helpers, stderr errors, exit codes |
-| `eslint.config.js` | TypeScript linting plus Microsoft-aligned naming/style conventions |
+| `.oxfmtrc.json` | Formatting and import/package ordering |
+| `.oxlintrc.json` | Fast JavaScript/TypeScript linting |

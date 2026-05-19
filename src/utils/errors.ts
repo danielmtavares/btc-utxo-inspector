@@ -52,12 +52,7 @@ export class InvalidAddressError extends AppError {
 
 export class InvalidPaginationError extends AppError {
   constructor(details: Record<string, unknown> = {}) {
-    super(
-      "INVALID_PAGINATION",
-      "Invalid pagination parameters",
-      EXIT_CODES.invalidInput,
-      details,
-    );
+    super("INVALID_PAGINATION", "Invalid pagination parameters", EXIT_CODES.invalidInput, details);
   }
 }
 
@@ -74,13 +69,11 @@ export class ProviderUnavailableError extends AppError {
 }
 
 export class ResponseValidationError extends AppError {
-  constructor(message = "Provider response validation failed", details: Record<string, unknown> = {}) {
-    super(
-      "RESPONSE_VALIDATION_FAILURE",
-      message,
-      EXIT_CODES.validationFailure,
-      details,
-    );
+  constructor(
+    message = "Provider response validation failed",
+    details: Record<string, unknown> = {},
+  ) {
+    super("RESPONSE_VALIDATION_FAILURE", message, EXIT_CODES.validationFailure, details);
   }
 }
 
@@ -113,4 +106,3 @@ export function toErrorEnvelope(error: unknown): ErrorEnvelope {
     },
   };
 }
-

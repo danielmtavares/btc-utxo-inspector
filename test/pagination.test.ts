@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { InvalidPaginationError } from "../src/utils/errors.js";
 import { createPaginationMetadata, paginateItems } from "../src/utils/pagination.js";
 
@@ -35,4 +36,3 @@ describe("pagination helpers", () => {
     expect(() => createPaginationMetadata(10, 1, 0)).toThrow(InvalidPaginationError);
   });
 });
-

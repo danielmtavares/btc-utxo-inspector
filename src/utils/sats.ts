@@ -70,7 +70,8 @@ export function satsToBtcString(value: bigint | number | string): string {
   const whole = absValue / SATS_PER_BTC;
   const fraction = absValue % SATS_PER_BTC;
   const fractionString = fraction.toString().padStart(8, "0").replace(/0+$/, "");
-  const formatted = fractionString.length > 0 ? `${whole.toString()}.${fractionString}` : whole.toString();
+  const formatted =
+    fractionString.length > 0 ? `${whole.toString()}.${fractionString}` : whole.toString();
 
   return negative ? `-${formatted}` : formatted;
 }

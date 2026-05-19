@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { InvalidAddressError } from "../src/utils/errors.js";
+
 import { isBitcoinMainnetAddress, parseBitcoinMainnetAddress } from "../src/utils/address.js";
+import { InvalidAddressError } from "../src/utils/errors.js";
 
 const BECH32_CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
 
@@ -71,22 +72,37 @@ function encodeSegwitAddress(hrp: string, version: number, program: Uint8Array):
   const data = [version, ...converted];
   const values = [...hrpExpand(hrp), ...data, 0, 0, 0, 0, 0, 0];
   const polymodResult = polymod(values) ^ checksumConstant;
-  const checksum = Array.from({ length: 6 }, (_unused, index) => (polymodResult >> (5 * (5 - index))) & 31);
+  const checksum = Array.from(
+    { length: 6 },
+    (_unused, index) => (polymodResult >> (5 * (5 - index))) & 31,
+  );
   const combined = [...data, ...checksum];
 
   return `${hrp}1${combined.map(value => BECH32_CHARSET[value]).join("")}`;
 }
 
 function createTaprootAddress(): string {
-  return encodeSegwitAddress("bc", 1, Uint8Array.from({ length: 32 }, (_, index) => index));
+  return encodeSegwitAddress(
+    "bc",
+    1,
+    Uint8Array.from({ length: 32 }, (_, index) => index),
+  );
 }
 
 describe("bitcoin address validation", () => {
   it("accepts supported mainnet base58 and segwit addresses", () => {
     const p2pkh = "1BoatSLRHtKNngkdXEeobR76b53LETtpyT";
     const p2sh = "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy";
-    const p2wpkh = encodeSegwitAddress("bc", 0, Uint8Array.from({ length: 20 }, (_, index) => index));
-    const p2wsh = encodeSegwitAddress("bc", 0, Uint8Array.from({ length: 32 }, (_, index) => index));
+    const p2wpkh = encodeSegwitAddress(
+      "bc",
+      0,
+      Uint8Array.from({ length: 20 }, (_, index) => index),
+    );
+    const p2wsh = encodeSegwitAddress(
+      "bc",
+      0,
+      Uint8Array.from({ length: 32 }, (_, index) => index),
+    );
     const p2tr = createTaprootAddress();
 
     expect(parseBitcoinMainnetAddress(p2pkh)).toEqual({

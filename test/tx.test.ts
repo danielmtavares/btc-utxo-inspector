@@ -1,23 +1,25 @@
 import { fileURLToPath } from "node:url";
+
 import { describe, expect, it, vi } from "vitest";
-import { InvalidPaginationError } from "../src/utils/errors.js";
+
+import type { ExplorerClient, TransactionSummary } from "../src/api/types.js";
 import { inspectTransactionCommand } from "../src/commands/tx.js";
 import { formatHumanTransaction } from "../src/format/human.js";
 import { formatJson } from "../src/format/json.js";
-import type { ExplorerClient, TransactionSummary } from "../src/api/types.js";
+import { InvalidPaginationError } from "../src/utils/errors.js";
 
 function createExplorerClient(summary: TransactionSummary): {
   client: ExplorerClient;
-  getTransactionSummary: ReturnType<typeof vi.fn>;
+  getTransactionSummary: ExplorerClient["getTransactionSummary"];
 } {
-  const getTransactionSummary = vi.fn(async () => {
+  const getTransactionSummary = vi.fn<ExplorerClient["getTransactionSummary"]>(async () => {
     await Promise.resolve();
     return summary;
   });
 
   return {
     client: {
-      getAddressSummary: vi.fn(async () => {
+      getAddressSummary: vi.fn<ExplorerClient["getAddressSummary"]>(async () => {
         await Promise.resolve();
         throw new Error("Unexpected address lookup");
       }),
@@ -54,7 +56,8 @@ function createTransactionSummary(): TransactionSummary {
           prevout: {
             valueSats: 5000000000n,
             scriptPubKey: "76a91489abcdefabbaabbaabbaabbaabbaabbaabbaabba88ac",
-            scriptPubKeyAsm: "OP_DUP OP_HASH160 89abcdefabbaabbaabbaabbaabbaabbaabbaabba OP_EQUALVERIFY OP_CHECKSIG",
+            scriptPubKeyAsm:
+              "OP_DUP OP_HASH160 89abcdefabbaabbaabbaabbaabbaabbaabbaabba OP_EQUALVERIFY OP_CHECKSIG",
             scriptPubKeyType: "p2pkh",
             scriptPubKeyAddress: "1BoatSLRHtKNngkdXEeobR76b53LETtpyT",
             spent: null,
@@ -236,7 +239,7 @@ describe("inspectTransactionCommand", () => {
 
   it("rejects invalid pagination before provider calls", async () => {
     const summary = createTransactionSummary();
-    const createClient = vi.fn(() => createExplorerClient(summary).client);
+    const createClient = vi.fn<() => ExplorerClient>(() => createExplorerClient(summary).client);
 
     await expect(
       inspectTransactionCommand(

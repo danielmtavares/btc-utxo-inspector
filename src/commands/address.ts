@@ -1,4 +1,3 @@
-import { parseBitcoinMainnetAddress } from "../utils/address.js";
 import type {
   BitcoinAddressType,
   BitcoinNetwork,
@@ -7,15 +6,9 @@ import type {
   PaginatedCollection,
   Utxo,
 } from "../api/types.js";
-import {
-  createAmountSummary,
-  getPagination,
-  resolveClient,
-} from "./shared.js";
-import type {
-  AmountSummary,
-  CommandClientDependencies,
-} from "./shared.js";
+import { parseBitcoinMainnetAddress } from "../utils/address.js";
+import { createAmountSummary, getPagination, resolveClient } from "./shared.js";
+import type { AmountSummary, CommandClientDependencies } from "./shared.js";
 
 export interface AddressCommandUtxo {
   txid: string;

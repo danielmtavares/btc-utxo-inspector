@@ -57,10 +57,13 @@ npm run start -- --help
 Run the local quality gate:
 
 ```bash
-npm run typecheck
-npm run lint
-npm test
-npm run build
+npm run check
+```
+
+Format files before committing:
+
+```bash
+npm run format
 ```
 
 ## Local Installation
@@ -360,10 +363,13 @@ The codebase is split into focused layers:
 
 This repo uses:
 
-- strict TypeScript
-- ESLint with TypeScript-aware rules
-- Microsoft-aligned naming conventions
-- snapshot tests for output stability
-- mocked integration tests instead of live API coupling
+- `oxfmt` for formatting and import/package ordering
+- strict TypeScript, including unused-code and implicit-return checks
+- `oxlint` for correctness, promise, import, and Vitest linting
+- Vitest snapshot, unit, smoke, and mocked integration tests
+- a pre-commit hook that runs formatting, linting, typechecking, and tests
+- GitHub Actions that run the same quality gate on PRs and `main` pushes
+
+The setup borrows the useful parts of OpenClaw's engineering discipline without copying its full monorepo weight. Formatting has one owner (`oxfmt`), linting has one owner (`oxlint`), and `npm run check` is the local source of truth before opening a PR.
 
 When validating changes, test results are treated as the passing condition. Tests should only change when the intended contract changes or the existing assertion is wrong.

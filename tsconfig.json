@@ -6,10 +6,14 @@
     "moduleResolution": "NodeNext",
     "moduleDetection": "force",
     "strict": true,
+    "noImplicitReturns": true,
+    "noUncheckedSideEffectImports": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "useUnknownInCatchVariables": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
@@ -21,6 +25,6 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src", "test", "tsup.config.ts", "vitest.config.ts", "eslint.config.js"],
+  "include": ["src", "test", "tsup.config.ts", "vitest.config.ts"],
   "exclude": ["dist", "node_modules"]
 }

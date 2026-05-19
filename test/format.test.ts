@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { formatHumanAddress, formatHumanTransaction } from "../src/format/human.js";
-import { formatJson } from "../src/format/json.js";
+
 import type { AddressCommandResult } from "../src/commands/address.js";
 import type { TransactionCommandResult } from "../src/commands/tx.js";
+import { formatHumanAddress, formatHumanTransaction } from "../src/format/human.js";
+import { formatJson } from "../src/format/json.js";
 
 function createAddressResult(): AddressCommandResult {
   return {
@@ -159,7 +160,9 @@ describe("formatters", () => {
   it("formats transaction results for humans", () => {
     const output = formatHumanTransaction(createTransactionResult());
 
-    expect(output).toContain("Transaction 2222222222222222222222222222222222222222222222222222222222222222");
+    expect(output).toContain(
+      "Transaction 2222222222222222222222222222222222222222222222222222222222222222",
+    );
     expect(output).toContain("Fee 0.001 BTC");
     expect(output).toContain("Outputs 1");
   });

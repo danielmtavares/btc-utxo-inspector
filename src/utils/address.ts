@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
-import { InvalidAddressError } from "./errors.js";
+
 import type { BitcoinAddressType, BitcoinNetwork } from "../api/types.js";
+import { InvalidAddressError } from "./errors.js";
 
 const BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 const BASE58_INDEX = new Map(Array.from(BASE58_ALPHABET, (character, index) => [character, index]));
@@ -143,15 +144,17 @@ function convertBits(
     if (bits > 0) {
       output.push((accumulator << (toBits - bits)) & maxValue);
     }
-  }
-  else if (bits >= fromBits || ((accumulator << (toBits - bits)) & maxValue) !== 0) {
+  } else if (bits >= fromBits || ((accumulator << (toBits - bits)) & maxValue) !== 0) {
     return null;
   }
 
   return output;
 }
 
-function decodeSegwitAddress(address: string): { type: BitcoinAddressType; network: BitcoinNetwork } {
+function decodeSegwitAddress(address: string): {
+  type: BitcoinAddressType;
+  network: BitcoinNetwork;
+} {
   if (address !== address.toLowerCase() && address !== address.toUpperCase()) {
     throw new Error("Bech32 strings cannot mix case");
   }
@@ -247,8 +250,7 @@ export function parseBitcoinMainnetAddress(address: string): {
         network: parsed.network,
         type: parsed.type,
       };
-    }
-    catch {
+    } catch {
       throw new InvalidAddressError(trimmed);
     }
   }
@@ -273,8 +275,7 @@ export function parseBitcoinMainnetAddress(address: string): {
           type: "p2sh",
         };
       }
-    }
-    catch {
+    } catch {
       throw new InvalidAddressError(trimmed);
     }
   }
@@ -286,8 +287,7 @@ export function isBitcoinMainnetAddress(address: string): boolean {
   try {
     parseBitcoinMainnetAddress(address);
     return true;
-  }
-  catch {
+  } catch {
     return false;
   }
 }

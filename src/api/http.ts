@@ -1,4 +1,8 @@
-import { NotFoundError, ProviderUnavailableError, ResponseValidationError } from "../utils/errors.js";
+import {
+  NotFoundError,
+  ProviderUnavailableError,
+  ResponseValidationError,
+} from "../utils/errors.js";
 import type { ExplorerSource } from "./types.js";
 
 export const DEFAULT_REQUEST_TIMEOUT_MS = 10_000;
@@ -117,10 +121,7 @@ function createRequestInit(signal: AbortSignal): RequestInit {
   };
 }
 
-function throwHttpErrorResponse(
-  response: Response,
-  context: RequestContext,
-): never {
+function throwHttpErrorResponse(response: Response, context: RequestContext): never {
   if (response.status === 404) {
     throw new NotFoundError("Requested resource not found", {
       ...getProviderDetails(context.source, context.url, { statusCode: response.status }),
@@ -146,16 +147,12 @@ async function performRequestAttempt(
 
   try {
     return await options.fetch(context.url, createRequestInit(abortController.signal));
-  }
-  finally {
+  } finally {
     clearTimeout(timeoutHandle);
   }
 }
 
-async function retryAttempt(
-  options: ResolvedHttpClientOptions,
-  attempt: number,
-): Promise<void> {
+async function retryAttempt(options: ResolvedHttpClientOptions, attempt: number): Promise<void> {
   await waitForRetry(options.sleep, options.initialBackoffMs, attempt);
 }
 
@@ -193,8 +190,7 @@ function throwNetworkError(context: RequestContext, error: unknown): never {
 async function parseJsonResponse(response: Response, context: RequestContext): Promise<unknown> {
   try {
     return await response.json();
-  }
-  catch (error: unknown) {
+  } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unable to parse JSON response";
 
     throw new ResponseValidationError("Provider returned invalid JSON", {
@@ -210,9 +206,9 @@ async function handleAttemptError(
   attempt: number,
 ): Promise<void> {
   if (
-    error instanceof NotFoundError
-    || error instanceof ProviderUnavailableError
-    || error instanceof ResponseValidationError
+    error instanceof NotFoundError ||
+    error instanceof ProviderUnavailableError ||
+    error instanceof ResponseValidationError
   ) {
     throw error;
   }
@@ -246,8 +242,7 @@ async function executeRequestWithRetries(
       }
 
       throwHttpErrorResponse(response, context);
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
       await handleAttemptError(context, error, options, attempt);
     }
   }
@@ -263,10 +258,7 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
 
   return {
     async requestJson(request): Promise<unknown> {
-      return await executeRequestWithRetries(
-        createRequestContext(request),
-        resolvedOptions,
-      );
+      return await executeRequestWithRetries(createRequestContext(request), resolvedOptions);
     },
   };
 }

@@ -1,17 +1,14 @@
 import { z } from "zod";
+
 import { ResponseValidationError } from "../utils/errors.js";
 import { paginateItems } from "../utils/pagination.js";
-import {
-  BlockstreamAddressSchema,
-  BlockstreamTxSchema,
-  BlockstreamUtxoSchema,
-} from "./schemas.js";
 import {
   createHttpClient,
   DEFAULT_INITIAL_BACKOFF_MS,
   DEFAULT_MAX_ATTEMPTS,
   DEFAULT_REQUEST_TIMEOUT_MS,
 } from "./http.js";
+import { BlockstreamAddressSchema, BlockstreamTxSchema, BlockstreamUtxoSchema } from "./schemas.js";
 import type {
   AddressStatistics,
   AddressSummary,
@@ -57,7 +54,9 @@ function toScriptType(value: string): BitcoinScriptType {
   }
 }
 
-function toAddressStatistics(stats: z.infer<typeof BlockstreamAddressSchema.shape.chain_stats>): AddressStatistics {
+function toAddressStatistics(
+  stats: z.infer<typeof BlockstreamAddressSchema.shape.chain_stats>,
+): AddressStatistics {
   return {
     fundedTxoCount: stats.funded_txo_count,
     fundedTxoSats: BigInt(stats.funded_txo_sum),
@@ -77,7 +76,8 @@ function toUtxoStatus(status: z.infer<typeof BlockstreamUtxoSchema.shape.status>
 }
 
 function toTransactionOutput(
-  output: z.infer<typeof BlockstreamTxSchema.shape.vout>[number]
+  output:
+    | z.infer<typeof BlockstreamTxSchema.shape.vout>[number]
     | z.infer<typeof BlockstreamTxSchema.shape.vin>[number]["prevout"],
 ): TransactionOutput {
   if (output === null || output === undefined) {
@@ -94,7 +94,9 @@ function toTransactionOutput(
   };
 }
 
-function toTransactionInput(input: z.infer<typeof BlockstreamTxSchema.shape.vin>[number]): TransactionInput {
+function toTransactionInput(
+  input: z.infer<typeof BlockstreamTxSchema.shape.vin>[number],
+): TransactionInput {
   return {
     txid: input.txid ?? null,
     vout: input.vout ?? null,
@@ -188,7 +190,9 @@ function toAddressSummary(
 ): AddressSummary {
   const chainStats = toAddressStatistics(addressResponse.chain_stats);
   const mempoolStats = toAddressStatistics(addressResponse.mempool_stats);
-  const normalizedUtxos = utxos.map(utxo => normalizeUtxo(utxo, request.addressType, request.address));
+  const normalizedUtxos = utxos.map(utxo =>
+    normalizeUtxo(utxo, request.addressType, request.address),
+  );
 
   return {
     address: request.address,
@@ -213,10 +217,7 @@ function getTotalInputSats(transaction: BlockstreamTransactionResponse): bigint 
 }
 
 function getTotalOutputSats(transaction: BlockstreamTransactionResponse): bigint {
-  return transaction.vout.reduce<bigint>(
-    (total, output) => total + BigInt(output.value),
-    0n,
-  );
+  return transaction.vout.reduce<bigint>((total, output) => total + BigInt(output.value), 0n);
 }
 
 function toTransactionSummary(

@@ -1,13 +1,19 @@
 import chalk from "chalk";
+
 import type { AddressCommandResult } from "../commands/address.js";
-import type { TransactionCommandResult } from "../commands/tx.js";
 import type { AmountSummary } from "../commands/shared.js";
+import type { TransactionCommandResult } from "../commands/tx.js";
 
 function formatAmount(label: string, amount: AmountSummary): string {
   return `${chalk.bold(label)} ${amount.btc} (${amount.sats})`;
 }
 
-function formatPaginationLine(label: string, page: number, totalPages: number, total: number): string {
+function formatPaginationLine(
+  label: string,
+  page: number,
+  totalPages: number,
+  total: number,
+): string {
   return `${chalk.bold(label)} ${chalk.bold("Page")} ${String(page)}/${String(totalPages || 1)} ${chalk.bold("Items")} ${String(total)}`;
 }
 
@@ -51,10 +57,7 @@ function formatTransactionInputLine(result: TransactionCommandResult, index: num
     return "";
   }
 
-  const parts = [
-    `${String(index + 1)}.`,
-    input.outpoint ?? "coinbase",
-  ];
+  const parts = [`${String(index + 1)}.`, input.outpoint ?? "coinbase"];
 
   if (input.prevout !== null) {
     parts.push(input.prevout.amount.btc, `(${input.prevout.amount.sats})`);
@@ -101,8 +104,7 @@ export function formatHumanAddress(result: AddressCommandResult): string {
 
   if (result.utxos.items.length === 0) {
     lines.push("0 items");
-  }
-  else {
+  } else {
     for (let index = 0; index < result.utxos.items.length; index += 1) {
       lines.push(formatAddressUtxoLine(result, index));
     }
@@ -133,8 +135,7 @@ export function formatHumanTransaction(result: TransactionCommandResult): string
 
   if (result.inputs.items.length === 0) {
     lines.push("0 items");
-  }
-  else {
+  } else {
     for (let index = 0; index < result.inputs.items.length; index += 1) {
       lines.push(formatTransactionInputLine(result, index));
     }
@@ -144,8 +145,7 @@ export function formatHumanTransaction(result: TransactionCommandResult): string
 
   if (result.outputs.items.length === 0) {
     lines.push("0 items");
-  }
-  else {
+  } else {
     for (let index = 0; index < result.outputs.items.length; index += 1) {
       lines.push(formatTransactionOutputLine(result, index));
     }

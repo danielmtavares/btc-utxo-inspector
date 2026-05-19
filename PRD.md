@@ -196,7 +196,8 @@ The package should expose reusable library functions and types for:
 | `tsx` | Run TypeScript directly during development |
 | `tsup` | Bundle and compile for distribution |
 | `vitest` | Unit and integration testing |
-| `eslint` | TypeScript linting and naming/style enforcement |
+| `oxfmt` | Formatting and import/package ordering |
+| `oxlint` | Fast JavaScript/TypeScript linting |
 
 ### Stack Notes & Pitfalls
 
