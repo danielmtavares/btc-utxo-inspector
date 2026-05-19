@@ -14,7 +14,7 @@
     "url": "https://github.com/danielmtavares/btc-utxo-inspector/issues"
   },
   "license": "ISC",
-  "author": "",
+  "author": "Daniel Tavares",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielmtavares/btc-utxo-inspector.git"
