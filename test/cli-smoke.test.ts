@@ -1,12 +1,19 @@
-import { describe, expect, it, vi } from "vitest";
 import { mkdtempSync, symlinkSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
 import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { pathToFileURL } from "node:url";
+
+import { describe, expect, it, vi } from "vitest";
+
 import { isExecutedDirectly, runCli } from "../src/cli.js";
+import type { AddressCommandInput, AddressCommandResult } from "../src/commands/address.js";
+import type { TransactionCommandInput, TransactionCommandResult } from "../src/commands/tx.js";
 import { InvalidAddressError } from "../src/utils/errors.js";
-import type { AddressCommandResult } from "../src/commands/address.js";
-import type { TransactionCommandResult } from "../src/commands/tx.js";
+
+type AddressCommandRunner = (input: AddressCommandInput) => Promise<AddressCommandResult>;
+type TransactionCommandRunner = (
+  input: TransactionCommandInput,
+) => Promise<TransactionCommandResult>;
 
 function createMemoryStream(): {
   output: string;
@@ -121,7 +128,9 @@ describe("cli smoke", () => {
   it("emits parseable json to stdout for the address command", async () => {
     const stdout = createMemoryStream();
     const stderr = createMemoryStream();
-    const inspectAddressCommand = vi.fn(() => Promise.resolve(createAddressResult()));
+    const inspectAddressCommand = vi.fn<AddressCommandRunner>(() =>
+      Promise.resolve(createAddressResult()),
+    );
 
     const exitCode = await runCli(
       [
@@ -141,7 +150,9 @@ describe("cli smoke", () => {
       ],
       {
         inspectAddressCommand,
-        inspectTransactionCommand: vi.fn(() => Promise.resolve(createTransactionResult())),
+        inspectTransactionCommand: vi.fn<TransactionCommandRunner>(() =>
+          Promise.resolve(createTransactionResult()),
+        ),
         stdout,
         stderr,
       },
@@ -165,7 +176,16 @@ describe("cli smoke", () => {
     expect(parsed.addressType).toBe("p2pkh");
     expect(parsed.balance.valueSats).toBe("4250000000");
     expect(parsed.utxos.items).toEqual([]);
-    expect(parsed.utxos.pagination).toEqual({ page: 2, limit: 5, total: 0, totalPages: 0, hasPreviousPage: true, hasNextPage: false, startIndex: 0, endIndex: 0 });
+    expect(parsed.utxos.pagination).toEqual({
+      page: 2,
+      limit: 5,
+      total: 0,
+      totalPages: 0,
+      hasPreviousPage: true,
+      hasNextPage: false,
+      startIndex: 0,
+      endIndex: 0,
+    });
     expect(inspectAddressCommand).toHaveBeenCalledWith({
       address: "1BoatSLRHtKNngkdXEeobR76b53LETtpyT",
       source: "blockstream",
@@ -182,8 +202,12 @@ describe("cli smoke", () => {
     const exitCode = await runCli(
       ["node", "cli.js", "tx", "2222222222222222222222222222222222222222222222222222222222222222"],
       {
-        inspectAddressCommand: vi.fn(() => Promise.resolve(createAddressResult())),
-        inspectTransactionCommand: vi.fn(() => Promise.resolve(createTransactionResult())),
+        inspectAddressCommand: vi.fn<AddressCommandRunner>(() =>
+          Promise.resolve(createAddressResult()),
+        ),
+        inspectTransactionCommand: vi.fn<TransactionCommandRunner>(() =>
+          Promise.resolve(createTransactionResult()),
+        ),
         stdout,
         stderr,
       },
@@ -191,7 +215,9 @@ describe("cli smoke", () => {
 
     expect(exitCode).toBe(0);
     expect(stderr.output).toBe("");
-    expect(stdout.output).toContain("Transaction 2222222222222222222222222222222222222222222222222222222222222222");
+    expect(stdout.output).toContain(
+      "Transaction 2222222222222222222222222222222222222222222222222222222222222222",
+    );
     expect(stdout.output).toContain("Status confirmed");
     expect(stdout.output).toContain("Output Total 49.999 BTC");
   });
@@ -209,8 +235,12 @@ describe("cli smoke", () => {
         "--json",
       ],
       {
-        inspectAddressCommand: vi.fn(() => Promise.resolve(createAddressResult())),
-        inspectTransactionCommand: vi.fn(() => Promise.resolve(createTransactionResult())),
+        inspectAddressCommand: vi.fn<AddressCommandRunner>(() =>
+          Promise.resolve(createAddressResult()),
+        ),
+        inspectTransactionCommand: vi.fn<TransactionCommandRunner>(() =>
+          Promise.resolve(createTransactionResult()),
+        ),
         stdout,
         stderr,
       },
@@ -244,15 +274,16 @@ describe("cli smoke", () => {
     const stdout = createMemoryStream();
     const stderr = createMemoryStream();
 
-    const exitCode = await runCli(
-      ["node", "cli.js", "address", "bad", "--json"],
-      {
-        inspectAddressCommand: vi.fn(() => Promise.reject(new InvalidAddressError("bad"))),
-        inspectTransactionCommand: vi.fn(() => Promise.resolve(createTransactionResult())),
-        stdout,
-        stderr,
-      },
-    );
+    const exitCode = await runCli(["node", "cli.js", "address", "bad", "--json"], {
+      inspectAddressCommand: vi.fn<AddressCommandRunner>(() =>
+        Promise.reject(new InvalidAddressError("bad")),
+      ),
+      inspectTransactionCommand: vi.fn<TransactionCommandRunner>(() =>
+        Promise.resolve(createTransactionResult()),
+      ),
+      stdout,
+      stderr,
+    });
 
     const parsed = JSON.parse(stderr.output) as {
       error: { code: string; message: string; details: Record<string, unknown> };

@@ -61,8 +61,9 @@ btc-utxo-inspector/
   * Edit: `package.json`
 * [x] Add dev dependencies: `typescript`, `tsx`, `tsup`, `vitest`
   * Edit: `package.json`
-* [x] Add linting with Microsoft-aligned TypeScript naming conventions
-  * Create/edit: `eslint.config.js`
+* [x] Add linting and formatting
+  * Create/edit: `.oxlintrc.json`
+  * Create/edit: `.oxfmtrc.json`
   * Edit: `package.json`
 * [x] Configure build, typecheck, test, dev, and local CLI scripts
   * Edit: `package.json`
@@ -243,7 +244,7 @@ Address command scope: show balance plus UTXOs only. Transaction details remain 
 * [x] Add package metadata required for publish-readiness
   * Edit: `package.json`
 
-This maps to the PRD success criteria around local `npm install`, package execution, publish-readiness, CLI binary exposure, and reusable library exports.
+This maps to the PRD success criteria around local `pnpm install`, package execution, publish-readiness, CLI binary exposure, and reusable library exports.
 
 ## Task 8 - Tests, Snapshots, Mocked Integration, and Quality Gate
 
@@ -277,10 +278,10 @@ This maps to the PRD success criteria around local `npm install`, package execut
 * [x] Add `typecheck`, `test`, `lint`, and `build` scripts
   * Edit: `package.json`
 * [x] Run full local quality gate:
-  * `npm run typecheck`
-  * `npm run lint`
-  * `npm test`
-  * `npm run build`
+  * `pnpm typecheck`
+  * `pnpm lint`
+  * `pnpm test`
+  * `pnpm build`
 * [x] Confirm no `any` in public functions and API types
   * Review: `src/api/types.ts`, `src/index.ts`, command modules, formatters
 

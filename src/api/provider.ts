@@ -1,6 +1,6 @@
 import { createBlockstreamClient, DEFAULT_BLOCKSTREAM_API_URL } from "./blockstream.js";
-import type { ExplorerClient, ExplorerSource } from "./types.js";
 import type { BlockstreamClientOptions } from "./blockstream.js";
+import type { ExplorerClient, ExplorerSource } from "./types.js";
 
 export interface ExplorerClientOptions extends BlockstreamClientOptions {
   source?: ExplorerSource;

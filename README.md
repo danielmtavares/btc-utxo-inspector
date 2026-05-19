@@ -26,41 +26,44 @@ It is intentionally scoped to a focused MVP instead of trying to become a full w
 ## Requirements
 
 - Node.js `24.15.0` or newer
-- npm
+- pnpm `11.1.3`
 
 ## Local Development Setup
 
 Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 Run the CLI from source during development:
 
 ```bash
-npm run dev -- --help
+pnpm dev -- --help
 ```
 
 Build the package:
 
 ```bash
-npm run build
+pnpm build
 ```
 
 Run the built CLI:
 
 ```bash
-npm run start -- --help
+pnpm start -- --help
 ```
 
 Run the local quality gate:
 
 ```bash
-npm run typecheck
-npm run lint
-npm test
-npm run build
+pnpm check
+```
+
+Format files before committing:
+
+```bash
+pnpm format
 ```
 
 ## Local Installation
@@ -68,20 +71,20 @@ npm run build
 If you want to install the package locally without publishing it, build and pack it from the repo:
 
 ```bash
-npm run build
-npm pack
+pnpm build
+pnpm pack
 ```
 
 Then install the generated tarball into another local project:
 
 ```bash
-npm install ../btc-utxo-inspector/btc-utxo-inspector-0.0.1.tgz
+pnpm add ../btc-utxo-inspector/btc-utxo-inspector-0.0.1.tgz
 ```
 
 After that, run it with:
 
 ```bash
-npx btc-utxo-inspector --help
+pnpm exec btc-utxo-inspector --help
 ```
 
 ## Commands
@@ -97,7 +100,7 @@ btc-utxo-inspector address <address>
 Example:
 
 ```bash
-npm run dev -- address 1BoatSLRHtKNngkdXEeobR76b53LETtpyT
+pnpm dev -- address 1BoatSLRHtKNngkdXEeobR76b53LETtpyT
 ```
 
 What it includes:
@@ -126,7 +129,7 @@ btc-utxo-inspector tx <txid>
 Example:
 
 ```bash
-npm run dev -- tx 2222222222222222222222222222222222222222222222222222222222222222
+pnpm dev -- tx 2222222222222222222222222222222222222222222222222222222222222222
 ```
 
 What it includes:
@@ -162,15 +165,15 @@ Both commands support:
 Examples:
 
 ```bash
-npm run dev -- address 1BoatSLRHtKNngkdXEeobR76b53LETtpyT --limit 10 --page 2
+pnpm dev -- address 1BoatSLRHtKNngkdXEeobR76b53LETtpyT --limit 10 --page 2
 ```
 
 ```bash
-npm run dev -- tx 2222222222222222222222222222222222222222222222222222222222222222 --json
+pnpm dev -- tx 2222222222222222222222222222222222222222222222222222222222222222 --json
 ```
 
 ```bash
-npm run dev -- address 1BoatSLRHtKNngkdXEeobR76b53LETtpyT --source blockstream --api-url https://blockstream.info/api
+pnpm dev -- address 1BoatSLRHtKNngkdXEeobR76b53LETtpyT --source blockstream --api-url https://blockstream.info/api
 ```
 
 ## Human-Readable Output Example
@@ -211,7 +214,7 @@ Outputs Page 1/1 Items 1
 Address example:
 
 ```bash
-npm run dev -- address 1BoatSLRHtKNngkdXEeobR76b53LETtpyT --json
+pnpm dev -- address 1BoatSLRHtKNngkdXEeobR76b53LETtpyT --json
 ```
 
 Example shape:
@@ -245,7 +248,7 @@ Example shape:
 Transaction example:
 
 ```bash
-npm run dev -- tx 2222222222222222222222222222222222222222222222222222222222222222 --json
+pnpm dev -- tx 2222222222222222222222222222222222222222222222222222222222222222 --json
 ```
 
 ## Errors and Exit Codes
@@ -360,10 +363,13 @@ The codebase is split into focused layers:
 
 This repo uses:
 
-- strict TypeScript
-- ESLint with TypeScript-aware rules
-- Microsoft-aligned naming conventions
-- snapshot tests for output stability
-- mocked integration tests instead of live API coupling
+- `oxfmt` for formatting and import/package ordering
+- strict TypeScript, including unused-code and implicit-return checks
+- `oxlint` for correctness, promise, import, and Vitest linting
+- Vitest snapshot, unit, smoke, and mocked integration tests
+- a pre-commit hook that runs formatting, linting, typechecking, and tests
+- GitHub Actions that run the same quality gate on PRs and `main` pushes
+
+The setup borrows the useful parts of OpenClaw's engineering discipline without copying its full monorepo weight. Formatting has one owner (`oxfmt`), linting has one owner (`oxlint`), package management has one owner (`pnpm`), and `pnpm check` is the local source of truth before opening a PR.
 
 When validating changes, test results are treated as the passing condition. Tests should only change when the intended contract changes or the existing assertion is wrong.

@@ -1,5 +1,5 @@
-import { InvalidPaginationError } from "./errors.js";
 import type { PaginatedCollection, PaginationInput, PaginationMetadata } from "../api/types.js";
+import { InvalidPaginationError } from "./errors.js";
 
 function assertPositiveInteger(name: string, value: number): void {
   if (!Number.isInteger(value) || value <= 0) {
@@ -56,4 +56,3 @@ export function paginateItems<T>(
     pagination: metadata,
   };
 }
-

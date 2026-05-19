@@ -1,9 +1,15 @@
 import { readFileSync } from "node:fs";
+
 import { describe, expect, it, vi } from "vitest";
+
 import { createBlockstreamClient, DEFAULT_BLOCKSTREAM_API_URL } from "../src/api/blockstream.js";
-import { createExplorerClient } from "../src/api/provider.js";
 import { createHttpClient } from "../src/api/http.js";
-import { NotFoundError, ProviderUnavailableError, ResponseValidationError } from "../src/utils/errors.js";
+import { createExplorerClient } from "../src/api/provider.js";
+import {
+  NotFoundError,
+  ProviderUnavailableError,
+  ResponseValidationError,
+} from "../src/utils/errors.js";
 
 function loadFixture(name: string): unknown {
   const fileUrl = new URL(`./fixtures/${name}`, import.meta.url);

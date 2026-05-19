@@ -4,20 +4,9 @@ export type BitcoinNetwork = "mainnet";
 
 export type BitcoinAddressType = "p2pkh" | "p2sh" | "p2wpkh" | "p2wsh" | "p2tr";
 
-export type BitcoinScriptType =
-  | "p2pkh"
-  | "p2sh"
-  | "p2wpkh"
-  | "p2wsh"
-  | "p2tr"
-  | "unknown";
+export type BitcoinScriptType = "p2pkh" | "p2sh" | "p2wpkh" | "p2wsh" | "p2tr" | "unknown";
 
-export type ProviderErrorKind =
-  | "network"
-  | "timeout"
-  | "not_found"
-  | "validation"
-  | "unexpected";
+export type ProviderErrorKind = "network" | "timeout" | "not_found" | "validation" | "unexpected";
 
 export interface PaginationInput {
   page: number;

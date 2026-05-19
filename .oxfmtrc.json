@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "arrowParens": "avoid",
+  "endOfLine": "lf",
+  "ignorePatterns": ["coverage/**", "dist/**", "node_modules/**", ".vscode/**", "*.tgz"],
+  "insertFinalNewline": true,
+  "printWidth": 100,
+  "semi": true,
+  "singleQuote": false,
+  "sortImports": true,
+  "sortPackageJson": true,
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "useTabs": false
+}

@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 import { realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+
 import { Command, CommanderError, Option } from "commander";
+
+import packageJson from "../package.json" with { type: "json" };
+import type { ExplorerSource } from "./api/types.js";
 import { inspectAddressCommand } from "./commands/address.js";
+import type { AddressCommandInput, AddressCommandResult } from "./commands/address.js";
 import { inspectTransactionCommand } from "./commands/tx.js";
+import type { TransactionCommandInput, TransactionCommandResult } from "./commands/tx.js";
 import { formatHumanAddress, formatHumanTransaction } from "./format/human.js";
 import { formatJson } from "./format/json.js";
 import { getExitCode, InvalidPaginationError, toErrorEnvelope } from "./utils/errors.js";
-import packageJson from "../package.json" with { type: "json" };
-import type { ExplorerSource } from "./api/types.js";
-import type { AddressCommandInput, AddressCommandResult } from "./commands/address.js";
-import type { TransactionCommandInput, TransactionCommandResult } from "./commands/tx.js";
 
 interface CommonCliOptions {
   json?: boolean;
@@ -46,7 +48,9 @@ function addCommonCommandOptions(command: Command): Command {
     )
     .option("--api-url <url>", "Override provider base URL")
     .option("--json", "Emit JSON to stdout")
-    .option("--limit <number>", "Limit paginated items", value => parseIntegerOption("limit", value))
+    .option("--limit <number>", "Limit paginated items", value =>
+      parseIntegerOption("limit", value),
+    )
     .option("--page <number>", "Select page number", value => parseIntegerOption("page", value));
 }
 
@@ -106,7 +110,11 @@ function writeOutput(output: string, stream: Pick<typeof process.stdout, "write"
   stream.write(output);
 }
 
-function writeError(error: unknown, json: boolean, stream: Pick<typeof process.stderr, "write">): void {
+function writeError(
+  error: unknown,
+  json: boolean,
+  stream: Pick<typeof process.stderr, "write">,
+): void {
   if (json) {
     stream.write(formatJson(toErrorEnvelope(error)));
     return;
@@ -153,9 +161,7 @@ export function createCli(runtime: CliRuntime = {}): Command {
   const program = new Command();
 
   program.name("btc-utxo-inspector");
-  program.description(
-    "Inspect Bitcoin mainnet addresses and transactions from the terminal.",
-  );
+  program.description("Inspect Bitcoin mainnet addresses and transactions from the terminal.");
   program.version(packageJson.version);
   program.exitOverride();
 
@@ -189,8 +195,7 @@ export async function runCli(argv: readonly string[], runtime: CliRuntime = {}):
   try {
     await cli.parseAsync([...argv]);
     return 0;
-  }
-  catch (error: unknown) {
+  } catch (error: unknown) {
     writeError(error, isJsonRequested(argv), stderr);
     return getCliExitCode(error);
   }

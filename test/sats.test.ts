@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { btcToSats, formatBtcAmount, formatSatsAmount, satsToBtcString } from "../src/utils/sats.js";
+
+import {
+  btcToSats,
+  formatBtcAmount,
+  formatSatsAmount,
+  satsToBtcString,
+} from "../src/utils/sats.js";
 
 describe("sats helpers", () => {
   it("converts sats to btc strings", () => {
@@ -19,4 +25,3 @@ describe("sats helpers", () => {
     expect(btcToSats("1.23456789")).toBe(123456789n);
   });
 });
-

@@ -1,11 +1,7 @@
 import { createExplorerClient } from "../api/provider.js";
+import type { ExplorerClient, ExplorerSource, PaginationInput } from "../api/types.js";
 import { InvalidPaginationError } from "../utils/errors.js";
 import { formatBtcAmount, formatSatsAmount } from "../utils/sats.js";
-import type {
-  ExplorerClient,
-  ExplorerSource,
-  PaginationInput,
-} from "../api/types.js";
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 25;
@@ -22,10 +18,7 @@ export interface CommandClientInput {
 }
 
 export interface CommandClientDependencies {
-  createClient?: (options: {
-    source?: ExplorerSource;
-    baseUrl?: string;
-  }) => ExplorerClient;
+  createClient?: (options: { source?: ExplorerSource; baseUrl?: string }) => ExplorerClient;
 }
 
 export interface PaginationCommandInput {

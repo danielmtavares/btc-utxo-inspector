@@ -1,8 +1,10 @@
 import { readFileSync } from "node:fs";
+
 import { describe, expect, it, vi } from "vitest";
+
+import { createExplorerClient } from "../src/api/provider.js";
 import { inspectAddressCommand } from "../src/commands/address.js";
 import { inspectTransactionCommand } from "../src/commands/tx.js";
-import { createExplorerClient } from "../src/api/provider.js";
 
 function loadFixture(name: string): unknown {
   const fileUrl = new URL(`./fixtures/${name}`, import.meta.url);
@@ -68,11 +70,12 @@ describe("mocked integration", () => {
         limit: 1,
       },
       {
-        createClient: () => createExplorerClient({
-          source: "blockstream",
-          baseUrl: "https://example.test/api",
-          fetch: fetchMock,
-        }),
+        createClient: () =>
+          createExplorerClient({
+            source: "blockstream",
+            baseUrl: "https://example.test/api",
+            fetch: fetchMock,
+          }),
       },
     );
 
@@ -110,11 +113,12 @@ describe("mocked integration", () => {
         limit: 1,
       },
       {
-        createClient: () => createExplorerClient({
-          source: "blockstream",
-          baseUrl: "https://example.test/api",
-          fetch: fetchMock,
-        }),
+        createClient: () =>
+          createExplorerClient({
+            source: "blockstream",
+            baseUrl: "https://example.test/api",
+            fetch: fetchMock,
+          }),
       },
     );
 

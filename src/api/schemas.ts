@@ -106,4 +106,3 @@ export type BlockstreamAddressStats = z.infer<typeof BlockstreamAddressStatsSche
 export type BlockstreamAddressResponse = z.infer<typeof BlockstreamAddressSchema>;
 export type BlockstreamUtxo = z.infer<typeof BlockstreamUtxoSchema>;
 export type BlockstreamTx = z.infer<typeof BlockstreamTxSchema>;
-

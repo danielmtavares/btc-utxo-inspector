@@ -1,16 +1,18 @@
 import { fileURLToPath } from "node:url";
+
 import { describe, expect, it, vi } from "vitest";
-import { InvalidAddressError, InvalidPaginationError } from "../src/utils/errors.js";
+
+import type { AddressSummary, ExplorerClient } from "../src/api/types.js";
 import { inspectAddressCommand } from "../src/commands/address.js";
 import { formatHumanAddress } from "../src/format/human.js";
 import { formatJson } from "../src/format/json.js";
-import type { AddressSummary, ExplorerClient } from "../src/api/types.js";
+import { InvalidAddressError, InvalidPaginationError } from "../src/utils/errors.js";
 
 function createExplorerClient(summary: AddressSummary): {
   client: ExplorerClient;
-  getAddressSummary: ReturnType<typeof vi.fn>;
+  getAddressSummary: ExplorerClient["getAddressSummary"];
 } {
-  const getAddressSummary = vi.fn(async () => {
+  const getAddressSummary = vi.fn<ExplorerClient["getAddressSummary"]>(async () => {
     await Promise.resolve();
     return summary;
   });
@@ -18,7 +20,7 @@ function createExplorerClient(summary: AddressSummary): {
   return {
     client: {
       getAddressSummary,
-      getTransactionSummary: vi.fn(async () => {
+      getTransactionSummary: vi.fn<ExplorerClient["getTransactionSummary"]>(async () => {
         await Promise.resolve();
         throw new Error("Unexpected transaction lookup");
       }),
@@ -187,7 +189,9 @@ describe("inspectAddressCommand", () => {
   });
 
   it("rejects invalid addresses before provider calls", async () => {
-    const createClient = vi.fn(() => createExplorerClient(createAddressSummary()).client);
+    const createClient = vi.fn<() => ExplorerClient>(
+      () => createExplorerClient(createAddressSummary()).client,
+    );
 
     await expect(
       inspectAddressCommand(
