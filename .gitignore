@@ -144,3 +144,6 @@ vite.config.ts.timestamp-*
 
 # Editor backup files
 *~
+
+# macOS metadata
+.DS_Store
