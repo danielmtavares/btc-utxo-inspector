@@ -11,6 +11,8 @@ It summarizes:
 
 The MVP uses the Blockstream Esplora API and is designed as both a CLI and a reusable library package.
 
+Built with the help of Codex and Cursor.
+
 ## Why This Project Exists
 
 This project is a compact Bitcoin data inspection tool that demonstrates:
